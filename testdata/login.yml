@@ -1,0 +1,22 @@
+login:
+#  - 用户名，密码，是否记住密码
+#  - username, userpwd, ispwd
+  - - username: 1175
+      userpwd: 'dgj123456'
+      ispwd: 1
+#      assert
+    - redirect: /index.php/desktop/index
+      msg: 登陆成功
+      status: success
+  - - username: 1175
+      userpwd: 'dgj1234567'
+      ispwd: 1
+    - redirect:
+      msg: '用户名或密码错误 ! '
+      status: error
+  - - username:
+      userpwd: 'dgj123456'
+      ispwd: 1
+    - redirect:
+      msg: 用户名或密码错误
+      status: error

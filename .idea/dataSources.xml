@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="dgj-staging" uuid="5a1a9557-80ad-481b-bf66-6f32db2670ea">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://10.90.18.11:3306</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="dgj-pord" uuid="6475c083-5179-4953-8242-1e9364b35fbc">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://rr-bp187kf6a88at7xm0.mysql.rds.aliyuncs.com:3306</jdbc-url>
+    </data-source>
+  </component>
+</project>

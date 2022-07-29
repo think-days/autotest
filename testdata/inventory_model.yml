@@ -1,0 +1,42 @@
+InventoryModel:
+- - _search: 'false'
+    action: newkzlist21321
+    bussType: PUO
+    cars: ''
+    displacement: ''
+    mBrand: ''
+    mYear: ''
+    models: ''
+    nd: 1655264792823
+    page: 1
+    rows: 20
+    sidx: number
+    skey: ''
+    sord: desc
+    typeNumber: all
+    width: 1481.6000000000001
+  - msg: 查询成功！
+    redirect: null
+    success: true
+getgoodsinfobyidmodel:
+- - InvId:
+    - '15169'
+    - '10683282'
+    - '7048'
+    - '7029'
+    - '7043'
+    - '10483'
+    - '10201234'
+    - '10321'
+    - '8278'
+    - '10486'
+    - '10318'
+    - '10487'
+    - '6990'
+    - '10471'
+    - '10482'
+    - '10320'
+    - '10234'
+    - '10484'
+  - status: success
+    success: true
