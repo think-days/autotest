@@ -1,6 +1,10 @@
+GetGoodsInFoByIdModel:
+- - InvId:
+  - status: success
+    success: true
 InventoryModel:
 - - _search: 'false'
-    action: newkzlist21321
+    action: newkzlist
     bussType: PUO
     cars: ''
     displacement: ''
@@ -18,25 +22,50 @@ InventoryModel:
   - msg: 查询成功！
     redirect: null
     success: true
-getgoodsinfobyidmodel:
-- - InvId:
-    - '15169'
-    - '10683282'
-    - '7048'
-    - '7029'
-    - '7043'
-    - '10483'
-    - '10201234'
-    - '10321'
-    - '8278'
-    - '10486'
-    - '10318'
-    - '10487'
-    - '6990'
-    - '10471'
-    - '10482'
-    - '10320'
-    - '10234'
-    - '10484'
-  - status: success
-    success: true
+QuantityLimitCheckModel:
+- - goods:
+    - InvId: InvId
+      qty: qty
+  - msg: ""
+    status: success
+    success: True
+Format_InterfaceModel:
+- - goodsData:
+      skuid : skuid
+      shipperCode : 001
+      qty : qty
+  - msg: 查询成功
+    status: success
+    success: True
+SaveInvpoModel:
+- - postData: ""
+  - msg: "保存草稿成功！"
+    status: success
+    success: True
+InitPoConFrimModel:
+- - id : id
+  - msg: "查询成功！"
+    status: success
+    success: True
+SubMitInvPoCgModel:
+- -
+  - msg: "提交订单成功！"
+    status: success
+    success: True
+GetPayInfoNewModel:
+- -
+  - message: "成功"
+    status: success
+    success: True
+    code : 0
+NoPagePayModel:
+- -
+  - message: "成功"
+    status: success
+    success: True
+    code : 0
+InvpoModel:
+- -
+  - msg: "查询成功！"
+    status: success
+    success: True
