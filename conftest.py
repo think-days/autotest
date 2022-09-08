@@ -5,7 +5,7 @@ from requests import Response
 from api.login_funtion import login
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="class")
 def login_fixture(base_url) -> Response:
     """全局登录session会话"""
     s = requests.Session()

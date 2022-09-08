@@ -2,7 +2,7 @@ import requests
 from requests import Response
 
 
-def login(s, base_url, username="1175", userpwd="dgj123456", ispwd=1) -> Response:
+def login(s, base_url, username="1176", userpwd="dgj123456", ispwd=1) -> Response:
     """
 
     :param s:Session对象
