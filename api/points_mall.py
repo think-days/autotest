@@ -93,7 +93,7 @@ def er_order_detail(s, base_url, er_id, *args, **kwargs) -> Response:
     return er_order_detail_response
 
 
-def save_er(s, base_url, rulecode, invid, skucode, qty, price, *args, **kwargs) -> Response:
+def save_er(s, base_url, rulecode, location_id, invid, skucode, qty, price, *args, **kwargs) -> Response:
     """
     广宣品提交订单,生成采购订单
     :param s:
@@ -107,7 +107,8 @@ def save_er(s, base_url, rulecode, invid, skucode, qty, price, *args, **kwargs) 
         "postData": {
             "payerCode": "001",
             "ruleCode": rulecode,
-            "accountId": 15, "locationId": 640,
+            "accountId": 15,
+            "locationId": location_id,
             "entries": [{
                 "invId": invid,
                 "skuCode": skucode,
@@ -117,11 +118,12 @@ def save_er(s, base_url, rulecode, invid, skucode, qty, price, *args, **kwargs) 
         }
     }
     save_er_response = s.post(url=save_er_url, data=save_er_data)
+    print(save_er_data)
     print(save_er_response.json())
     return save_er_response
 
 
-def get_pay_info(s, base_url, orders, *args, **kwargs):
+def get_pay_info(s, base_url, orders, *args, **kwargs) -> Response:
     """
     获取支付信息
     :param s:
@@ -140,7 +142,7 @@ def get_pay_info(s, base_url, orders, *args, **kwargs):
     return get_pay_info_response
 
 
-def get_qr_code_by_activity(s, base_url, source_order_id, *args, **kwargs):
+def get_qr_code_by_activity(s, base_url, source_order_id, *args, **kwargs) -> Response:
     """
     提交支付
     :param s:
@@ -158,7 +160,7 @@ def get_qr_code_by_activity(s, base_url, source_order_id, *args, **kwargs):
     return get_qr_code_by_activity_response
 
 
-def get_pay_result(s, base_url, orders, token, *args, **kwargs):
+def get_pay_result(s, base_url, orders, token, *args, **kwargs) -> Response:
     """
     查询该订单
     :param s:
