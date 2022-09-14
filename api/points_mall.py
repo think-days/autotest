@@ -2,8 +2,6 @@
 积分商城
 """
 import json
-
-import requests
 from requests import Response
 
 
@@ -18,7 +16,6 @@ def advertise_ids(s, base_url, *args, **kwargs) -> Response:
     """
     advertise_ids_url = base_url + "/index.php/basedata/inventory/advertiseIds"
     advertise_ids_response = s.post(url=advertise_ids_url)
-    print(advertise_ids_response.json())
     return advertise_ids_response
 
 
@@ -33,7 +30,6 @@ def get_er_account_info(s, base_url, *args, **kwargs) -> Response:
     """
     get_er_account_url = base_url + "/index.php/scm/receipt/getErAccountInfo"
     get_er_account_response = s.post(url=get_er_account_url)
-    print(get_er_account_response.json())
     return get_er_account_response
 
 
@@ -53,7 +49,6 @@ def points_mall(s, base_url, page=1) -> Response:
         "rows": 20
     }
     points_mall_response = s.post(url=points_mall_url, data=points_mall_data)
-    print(points_mall_response.json())
     return points_mall_response
 
 
@@ -73,7 +68,6 @@ def er_order_confirm(s, base_url, inv_id, num=1, *args, **kwargs) -> Response:
         "postData": json.dumps([{"invId": inv_id, "num": num}])
     }
     er_order_confirm_response = s.post(url=er_order_confirm_url, data=er_order_confirm_data)
-    print(er_order_confirm_response.json())
     return er_order_confirm_response
 
 
@@ -93,7 +87,6 @@ def er_order_detail(s, base_url, er_id, *args, **kwargs) -> Response:
         "id": er_id
     }
     er_order_detail_response = s.post(url=er_order_detail_url, data=er_order_detail_data)
-    print(er_order_detail_response.json())
     return er_order_detail_response
 
 
@@ -122,7 +115,6 @@ def save_er(s, base_url, rulecode, location_id, invid, skucode, qty, price, *arg
         })
     }
     save_er_response = s.post(url=save_er_url, data=save_er_data)
-    print(save_er_response.json())
     return save_er_response
 
 
@@ -141,7 +133,6 @@ def get_pay_info(s, base_url, orders, *args, **kwargs) -> Response:
         "subAccountId": ""
     }
     get_pay_info_response = s.post(url=get_pay_info_url, data=get_pay_info_data)
-    print(get_pay_info_response.json())
     return get_pay_info_response
 
 
@@ -159,7 +150,6 @@ def get_qr_code_by_activity(s, base_url, source_order_id, *args, **kwargs) -> Re
         "sourceOrderId": source_order_id
     }
     get_qr_code_by_activity_response = s.post(url=get_qr_code_by_activity_url, data=get_qr_code_by_activity_data)
-    print(get_qr_code_by_activity_response.json())
     return get_qr_code_by_activity_response
 
 
@@ -179,7 +169,6 @@ def get_pay_result(s, base_url, orders, token, *args, **kwargs) -> Response:
         "token": token
     }
     get_pay_result_response = s.post(url=get_pay_result_url, data=get_pay_result_data)
-    print(get_pay_result_response.json())
     return get_pay_result_response
 
 # inv_po()

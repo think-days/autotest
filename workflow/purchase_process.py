@@ -11,9 +11,9 @@ from api.find_po_order import inv_po
 
 class PurchaseGlobalVariable:
     # 类变量
-    invid_info = []  # invid_info列表
-    invid = ""  # 一个invid
-    skuid = ""  # 一个invid对应的skuid
+    invid_info = []  # invId_info列表
+    invid = ""  # 一个invId
+    skuid = ""  # 一个invId对应的skuId
     minnum = ""  # 最小起订量，用于下单数量
     location_id = ""  # 仓库ID
     draft_id = ""  # 草稿单id
@@ -38,13 +38,12 @@ class TestGeneralPurchase:
     @pytest.mark.inventory
     def test_inventory(self, login_fixture, base_url):
         """
-        打开采购订单，点击表单，点击表单中的选择，并从第一页商品列表中随机选择一个invid
+        打开采购订单，点击表单，点击表单中的选择，并从第一页商品列表中随机选择一个invId
         :param login_fixture:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        inventory_response = inventory(login_s, base_url)
+        inventory_response = inventory(login_fixture, base_url)
         print(inventory_response.json())
         sleep(1)
 
@@ -65,13 +64,12 @@ class TestGeneralPurchase:
     @pytest.mark.getgoodsinfobyid
     def test_getgoodsinfobyid(self, login_fixture, base_url):
         """
-        取出invid对应的skuid、最小起订量
+        取出invId对应的skuId、最小起订量
         :param login_fixture:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        getgoodsinfobyid_response = get_goods_info_by_id(login_s, base_url, PurchaseGlobalVariable.invid)
+        getgoodsinfobyid_response = get_goods_info_by_id(login_fixture, base_url, PurchaseGlobalVariable.invid)
         print(getgoodsinfobyid_response.json())
 
         PurchaseGlobalVariable.skuid = getgoodsinfobyid_response.json()["skuId"]  # 取出invid对应的skuid作为全局变量
@@ -89,8 +87,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        quantitylimitcheck_response = quantity_limit_check(login_s, base_url, PurchaseGlobalVariable.minnum,
+        quantitylimitcheck_response = quantity_limit_check(login_fixture, base_url, PurchaseGlobalVariable.minnum,
                                                            PurchaseGlobalVariable.invid)
         print(quantitylimitcheck_response.json())
 
@@ -107,8 +104,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        format_interface_response = format_interface(login_s, base_url, PurchaseGlobalVariable.skuid,
+        format_interface_response = format_interface(login_fixture, base_url, PurchaseGlobalVariable.skuid,
                                                      PurchaseGlobalVariable.minnum)
         print(format_interface_response.json())
 
@@ -125,12 +121,11 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        location_info = inv_location(login_s, base_url)
+        location_info = inv_location(login_fixture, base_url)
         for i in location_info.json()["data"]["storeLocation"][0]["locationList"]:
             if i["number"] == "KZ001":
                 PurchaseGlobalVariable.location_id = i["id"]
-        saveinvpo_respongse = save_inv_po(login_s, base_url, PurchaseGlobalVariable.location_id,
+        saveinvpo_respongse = save_inv_po(login_fixture, base_url, PurchaseGlobalVariable.location_id,
                                           PurchaseGlobalVariable.invid, PurchaseGlobalVariable.skuid,
                                           PurchaseGlobalVariable.minnum)
         print(saveinvpo_respongse.json())
@@ -151,8 +146,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        initpoconfrim_response = init_po_conf_rim(login_s, base_url, PurchaseGlobalVariable.draft_id)
+        initpoconfrim_response = init_po_conf_rim(login_fixture, base_url, PurchaseGlobalVariable.draft_id)
         print(initpoconfrim_response.json())
 
         # 提交订单参数，期货商品/现货商品其中一个详情，以及订单信息
@@ -173,8 +167,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        submitinvpocg_response = submit_inv_po_cg(login_s, base_url, PurchaseGlobalVariable.order_info,
+        submitinvpocg_response = submit_inv_po_cg(login_fixture, base_url, PurchaseGlobalVariable.order_info,
                                                   PurchaseGlobalVariable.draft_id)
         print(submitinvpocg_response.json())
 
@@ -193,8 +186,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        getpayinfonew_response = get_pay_info_new(login_s, base_url, PurchaseGlobalVariable.order_list)
+        getpayinfonew_response = get_pay_info_new(login_fixture, base_url, PurchaseGlobalVariable.order_list)
         print(getpayinfonew_response.json())
 
         PurchaseGlobalVariable.pretradetoken_id = getpayinfonew_response.json()["data"]["preTradeToken"]
@@ -213,8 +205,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        nopagepay_response = no_page_pay(login_s, base_url, PurchaseGlobalVariable.pretradetoken_id)
+        nopagepay_response = no_page_pay(login_fixture, base_url, PurchaseGlobalVariable.pretradetoken_id)
         print(nopagepay_response.json())
 
         assert nopagepay_response.json()["success"] is True
@@ -231,8 +222,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        invpo_response = inv_po(login_s, base_url)
+        invpo_response = inv_po(login_fixture, base_url)
         print(invpo_response.json())
 
         assert invpo_response.json()["success"] is True
@@ -281,8 +271,7 @@ class TestReturnTheGoods:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
-        getinvpoinfoformat_response = get_inv_po_info_format(login_s, base_url, ids=PurchaseGlobalVariable.ids)
+        getinvpoinfoformat_response = get_inv_po_info_format(login_fixture, base_url, ids=PurchaseGlobalVariable.ids)
         print(getinvpoinfoformat_response.json())
 
         PurchaseGlobalVariable.getinvpoinfoformat_token = getinvpoinfoformat_response.json()["data"]["token"]
@@ -304,8 +293,7 @@ class TestReturnTheGoods:
         for i in PurchaseGlobalVariable.getinvpoinfo_response_info:
             n = {"id": i["id"], "iid": i["iid"]}
             get_goodslist.append(n)
-        login_s = login_fixture
-        closeinvpo_response = close_inv_po(login_s, base_url, goodslist=get_goodslist,
+        closeinvpo_response = close_inv_po(login_fixture, base_url, goodslist=get_goodslist,
                                            token=PurchaseGlobalVariable.getinvpoinfoformat_token)
         print(closeinvpo_response.json())
 

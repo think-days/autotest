@@ -14,9 +14,9 @@ from api.find_po_order import inv_po
 
 
 class PointPurchaseGlobalVariable:
-    invId_list = []  # invid列表
-    invId = ""  # 获取invid
-    sku_code = ""  # skuid
+    invId_list = []  # invId列表
+    invId = ""  # 获取invId
+    sku_code = ""  # skuId
     rule_code = ""  # 账号code
     points_order_id = ""  # 提交预览ID
     total_num = ""  # 订单数量
@@ -24,6 +24,10 @@ class PointPurchaseGlobalVariable:
     po_order = ""  # 采购单单号
     pay_token = ""  # 支付token
     location_id = 0  # 仓库id
+    ids = []  # 未发货退货订单详情id
+    iid = ""  # 未发货退货主表id
+    get_inv_po_info_format_token = ""  # 未发货退货订单token，每次发起更换
+    get_inv_po_info_response_info = []  # 未发货退货订单详情
 
 
 @allure.epic("采购模块")
@@ -69,7 +73,7 @@ class TestPointMall:
     @pytest.mark.pointsMall
     def test_points_mall(self, login_fixture, base_url):
         """
-        积分商场商品列表, 并将商品invid添加到列表中，随机获得一个invid
+        积分商场商品列表, 并将商品invId添加到列表中，随机获得一个invId
         :param login_fixture:
         :param base_url:
         :return: 商品列表
@@ -104,7 +108,7 @@ class TestPointMall:
     @pytest.mark.getGoodsInfoById
     def test_get_goods_info_by_id(self, login_fixture, base_url):
         """
-        查询商品，获取最小起订量和skuid
+        查询商品，获取最小起订量和skuId
         :param login_fixture:
         :param base_url:
         :return:
@@ -232,6 +236,7 @@ class TestPointMall:
         :param base_url:
         :return:
         """
+        sleep(3)
         get_pay_result_response = get_pay_result(login_fixture, base_url, PointPurchaseGlobalVariable.po_order,
                                                  PointPurchaseGlobalVariable.pay_token)
         print(get_pay_result_response.json())
@@ -243,13 +248,13 @@ class TestPointMall:
 
 @allure.epic("采购模块")
 @allure.feature("积分商城订单未发货退货流程")
-class PointMallOrderClose:
+class TestPointMallOrderClose:
 
     @allure.title("未发货退货查询")
     @pytest.mark.get_inv_po_info
     def test_get_inv_po_info(self, login_fixture, base_url):
         """
-        查询订单状态是否是待出库，否则每60秒查一次
+        查询订单状态是否是待出库，每60秒查一次
         :param login_fixture:
         :param base_url:
         :return:
@@ -261,5 +266,55 @@ class PointMallOrderClose:
             else:
                 sleep(60)
         get_inv_po_info_response = get_inv_po_info(login_fixture, base_url, PointPurchaseGlobalVariable.po_order)
-        print(get_inv_po_info_response)
+        print(get_inv_po_info_response.json())
 
+        for i in get_inv_po_info_response.json()["data"]["rows"]:
+            PointPurchaseGlobalVariable.ids.append(i["id"])
+        PointPurchaseGlobalVariable.iid = get_inv_po_info_response.json()["data"]["rows"][0]["iid"]
+        PointPurchaseGlobalVariable.get_inv_po_info_response_info = get_inv_po_info_response.json()["data"]["rows"]
+
+        assert get_inv_po_info_response.json()["msg"] == "查询成功！"
+        assert get_inv_po_info_response.json()["status"] == "success"
+        assert get_inv_po_info_response.json()["data"]["rows"][0]["billNo"] == PointPurchaseGlobalVariable.po_order[0]
+
+    @allure.title("未发货商品提交预览")
+    @pytest.mark.getinvpoinfoformat
+    def test_get_inv_po_info_format(self, login_fixture, base_url):
+        """
+        未发货商品提交预览
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        get_inv_po_info_format_response = get_inv_po_info_format(login_fixture, base_url,
+                                                                 ids=PointPurchaseGlobalVariable.ids)
+        print(get_inv_po_info_format_response.json())
+
+        PointPurchaseGlobalVariable.get_inv_po_info_format_token = get_inv_po_info_format_response.json()["data"][
+            "token"]
+
+        assert get_inv_po_info_format_response.json()["msg"] == "查询成功！"
+        assert get_inv_po_info_format_response.json()["status"] == "success"
+        assert get_inv_po_info_format_response.json()["data"]["rows"][0]["billNo"] == \
+               PointPurchaseGlobalVariable.po_order[0]
+
+    @allure.title("未发货商品关闭")
+    @pytest.mark.closeinvpo
+    def test_close_inv_po(self, login_fixture, base_url):
+        """
+        未发货商品关闭
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        get_goods_list = []
+        for i in PointPurchaseGlobalVariable.get_inv_po_info_response_info:
+            n = {"id": i["id"], "iid": i["iid"]}
+            get_goods_list.append(n)
+        close_inv_po_response = close_inv_po(login_fixture, base_url, goodslist=get_goods_list,
+                                             token=PointPurchaseGlobalVariable.get_inv_po_info_format_token)
+        print(close_inv_po_response.json())
+
+        assert close_inv_po_response.json()["msg"] == "关闭成功1条采购单!"
+        assert close_inv_po_response.json()["status"] == "success"
+        assert close_inv_po_response.json()["success"] is True

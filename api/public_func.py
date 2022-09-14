@@ -6,6 +6,7 @@ import json
 from requests import Response
 
 
+# 首页接口
 def inv_location(s, base_url, *args, **kwargs) -> Response:
     """
     获取仓库信息
