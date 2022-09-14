@@ -1,6 +1,8 @@
 """
 积分商城
 """
+import json
+
 import requests
 from requests import Response
 
@@ -16,7 +18,7 @@ def advertise_ids(s, base_url, *args, **kwargs) -> Response:
     """
     advertise_ids_url = base_url + "/index.php/basedata/inventory/advertiseIds"
     advertise_ids_response = s.post(url=advertise_ids_url)
-    print(advertise_ids_response.text)
+    print(advertise_ids_response.json())
     return advertise_ids_response
 
 
@@ -57,16 +59,18 @@ def points_mall(s, base_url, page=1) -> Response:
 
 # get_goods_info_by_id():
 
-def er_order_confirm(s, base_url, inv_id, num, *args, **kwargs) -> Response:
+def er_order_confirm(s, base_url, inv_id, num=1, *args, **kwargs) -> Response:
     """
     广宣品订单预览
     :param s:
     :param base_url:
+    :param inv_id:
+    :param num:订货批量
     :return:生成订单
     """
     er_order_confirm_url = base_url + "/index.php/scm/invPo/erOrderConfirm"
     er_order_confirm_data = {
-        "postData": [{"invId": inv_id, "num": num}]
+        "postData": json.dumps([{"invId": inv_id, "num": num}])
     }
     er_order_confirm_response = s.post(url=er_order_confirm_url, data=er_order_confirm_data)
     print(er_order_confirm_response.json())
@@ -104,7 +108,7 @@ def save_er(s, base_url, rulecode, location_id, invid, skucode, qty, price, *arg
     """
     save_er_url = base_url + "/index.php/scm/invPo/saveEr"
     save_er_data = {
-        "postData": {
+        "postData": json.dumps({
             "payerCode": "001",
             "ruleCode": rulecode,
             "accountId": 15,
@@ -115,10 +119,9 @@ def save_er(s, base_url, rulecode, location_id, invid, skucode, qty, price, *arg
                 "qty": qty,
                 "price": price
             }]
-        }
+        })
     }
     save_er_response = s.post(url=save_er_url, data=save_er_data)
-    print(save_er_data)
     print(save_er_response.json())
     return save_er_response
 
@@ -178,7 +181,6 @@ def get_pay_result(s, base_url, orders, token, *args, **kwargs) -> Response:
     get_pay_result_response = s.post(url=get_pay_result_url, data=get_pay_result_data)
     print(get_pay_result_response.json())
     return get_pay_result_response
-
 
 # inv_po()
 

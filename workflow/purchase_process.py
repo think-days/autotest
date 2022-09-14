@@ -5,7 +5,8 @@ import random
 import allure
 import pytest
 from api.gen_purchase import *
-from api.front_page import inv_location
+from api.public_func import *
+from api.find_po_order import inv_po
 
 
 class PurchaseGlobalVariable:
@@ -240,7 +241,7 @@ class TestGeneralPurchase:
 
 
 @allure.epic("采购模块")
-@allure.feature("未发货退货流程")
+@allure.feature("普通采购未发货退货流程")
 class TestReturnTheGoods:
 
     @allure.title("未发货退货查询采购订单")
@@ -252,7 +253,6 @@ class TestReturnTheGoods:
         :param base_url:
         :return:
         """
-        login_s = login_fixture
         while True:
             a = inv_po(login_fixture, base_url=base_url, typenumber="allStatus",
                        skey=PurchaseGlobalVariable.order_list[0])
@@ -260,7 +260,7 @@ class TestReturnTheGoods:
                 break
             else:
                 sleep(120)
-        getinvpoinfo_response = get_inv_po_info(login_s, base_url, skey=PurchaseGlobalVariable.order_list[0])
+        getinvpoinfo_response = get_inv_po_info(login_fixture, base_url, skey=PurchaseGlobalVariable.order_list[0])
         print(getinvpoinfo_response.json())
 
         for i in getinvpoinfo_response.json()["data"]["rows"]:
