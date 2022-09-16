@@ -43,7 +43,7 @@ class TestGeneralPurchase:
         :param base_url:
         :return:
         """
-        inventory_response = inventory(login_fixture, base_url)
+        inventory_response = inventory(login_fixture, base_url, buss_type="PUO")
         print(inventory_response.json())
         sleep(1)
 

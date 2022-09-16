@@ -13,7 +13,7 @@ from requests import Response
 os.environ["NO_PROXY"] = "dgj-staging.kzmall.cc"
 
 
-def inventory(s, base_url, *args, **kwargs) -> Response:
+def inventory(s, base_url, buss_type, *args, **kwargs) -> Response:
     """
     采购订单打开选择商品页面
     :param s: session对象
@@ -31,14 +31,15 @@ def inventory(s, base_url, *args, **kwargs) -> Response:
         "mYear": "",
         "displacement": "",
         "width": 1481.6000000000001,
-        "bussType": "PUO",
+        "bussType": buss_type,
         "typeNumber": "all",
         "_search": "false",
         "nd": 1655264792823,
         "rows": 20,
         "page": 1,
         "sidx": "number",
-        "sord": "desc"
+        "sord": "desc",
+        **kwargs
     }
     inventory_response = s.get(url=inventory_url, params=inventory_data)
     return inventory_response  # invid_info  # 返回所有商品，和商品的值

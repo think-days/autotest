@@ -31,6 +31,14 @@ def get_return_quota(s, base_url, *args, **kwargs) -> Response:
 
 
 def assist(s, base_url, *args, **kwargs) -> Response:
+    """
+    查询商品品类
+    :param s:
+    :param base_url:
+    :param args:
+    :param kwargs:
+    :return:
+    """
     assist_url = base_url + "/index.php/basedata/assist"
     assist_data = {
         "action": "kzlist",
@@ -44,7 +52,7 @@ def assist(s, base_url, *args, **kwargs) -> Response:
 
 # inventory()
 
-def get_goods_for_return_list(s, base_url, inv_id, bu_id=203755, *args, **kwargs) -> Response:
+def get_goods_for_return_list(s, base_url, inv_id=None, bu_id=203755, *args, **kwargs) -> Response:
     """
     返回物料明细
     :param s:
@@ -55,13 +63,14 @@ def get_goods_for_return_list(s, base_url, inv_id, bu_id=203755, *args, **kwargs
     :param kwargs:
     :return:
     """
-    get_goods_for_return_list_url = base_url + "getGoodsForReturnList"
+    get_goods_for_return_list_url = base_url + "/index.php/basedata/Inventory/getGoodsForReturnList"
     get_goods_for_return_list_data = {
-        "invIds": inv_id,
+        "invIds": "1287, 1034",
         "buId": bu_id,
         "returnType": "30-Cxx-05"
     }
     get_goods_for_return_list_response = s.post(get_goods_for_return_list_url, data=get_goods_for_return_list_data)
+    print(get_goods_for_return_list_data)
     print(get_goods_for_return_list_response.json())
     return get_goods_for_return_list_response
 
