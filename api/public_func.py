@@ -3,10 +3,14 @@
 """
 import json
 
+import requests
 from requests import Response
 
 
 # 首页接口（inv_location）
+from api.login_funtion import login
+
+
 def inv_location(s, base_url, *args, **kwargs) -> Response:
     """
     获取仓库信息
@@ -99,6 +103,13 @@ def return_order_list(s, base_url, key_words=None, bill_status=None, order_type=
 
 
 def cancel_draft(s, base_url, id_s) -> Response:
+    """
+
+    :param s:
+    :param base_url:
+    :param id_s:
+    :return:
+    """
     cancel_draft_url = base_url + "/index.php/po/AfterSale/cancel"
     cancel_draft_data = {
         "id": id_s
@@ -107,3 +118,37 @@ def cancel_draft(s, base_url, id_s) -> Response:
     print(cancel_draft_response.json())
     return cancel_draft_response
 
+
+# 退货申请单-获取商品下仓库、货位明细，用于切换仓库
+def get_goods_by_storage_and_area_info(s, base_url, inv_ids, location_id) -> Response:
+    """
+    退货申请单中选择商品页面，选择商品后，切换仓库，返回该物料下的仓库、货位明细
+    :param s:
+    :param base_url:
+    :param inv_ids:字符串，inv_id
+    :param location_id:字符串，仓库id
+    :return:
+    """
+    get_goods_by_storage_and_area_info_url = base_url + "/index.php/basedata/Inventory/getGoodsByStorageAndAreaInfo"
+    get_goods_by_storage_and_area_info_params = {
+        "isGoodsToStorageType": "true"
+    }
+    get_goods_by_storage_and_area_info_date = {
+        "invIds[]": inv_ids,
+        "locationId": location_id,
+        "NoStorage": "no"
+    }
+    get_goods_by_storage_and_area_info_response = s.post(url=get_goods_by_storage_and_area_info_url,
+                                                         data=get_goods_by_storage_and_area_info_date,
+                                                         params=get_goods_by_storage_and_area_info_params)
+    print(get_goods_by_storage_and_area_info_response.json())
+    return get_goods_by_storage_and_area_info_response
+
+
+# if __name__ == '__main__':
+    # s = requests.Session()
+    # base_url = "http://dgj-staging.kzmall.cc"
+    # c = login(s, base_url)
+    #
+    # a = get_goods_by_storage_and_area_info(s, base_url, 897, 640)
+    # print(a.json())

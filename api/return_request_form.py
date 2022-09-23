@@ -52,7 +52,7 @@ def assist(s, base_url, *args, **kwargs) -> Response:
 
 # inventory()
 
-def get_goods_for_return_list(s, base_url, inv_id=None, bu_id=203755, *args, **kwargs) -> Response:
+def get_goods_for_return_list(s, base_url, inv_id, bu_id="203755", *args, **kwargs) -> Response:
     """
     返回物料明细
     :param s:
@@ -65,7 +65,7 @@ def get_goods_for_return_list(s, base_url, inv_id=None, bu_id=203755, *args, **k
     """
     get_goods_for_return_list_url = base_url + "/index.php/basedata/Inventory/getGoodsForReturnList"
     get_goods_for_return_list_data = {
-        "invIds": "1287, 1034",
+        "invIds": inv_id,
         "buId": bu_id,
         "returnType": "30-Cxx-05"
     }

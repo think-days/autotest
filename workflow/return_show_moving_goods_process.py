@@ -7,11 +7,15 @@ import allure
 import pytest
 
 from api.gen_purchase import inventory
+from api.public_func import get_goods_by_storage_and_area_info
 from api.return_request_form import *
 
 
 class ReturnGlobalVariable:
-    inv_id_info = []
+    inv_id_info = []  # 10个物料明细
+    goods_list = {}  # 物料仓库、库存明细
+    get_inv_id_list = []  # inv_id列表
+    get_location_id = ""  # 仓库id
 
 
 @allure.epic("采购模块")
@@ -46,6 +50,8 @@ class TestReturnOfSlowMovingGoods:
         get_return_quota_response = get_return_quota(login_fixture, base_url)
         print(get_return_quota_response.json())
 
+    @allure.title("查询商品品类")
+    @pytest.mark.assist
     def test_assist(self, login_fixture, base_url):
         """
         查询商品品类
@@ -56,9 +62,11 @@ class TestReturnOfSlowMovingGoods:
         assist_response = assist(login_fixture, base_url)
         print(assist_response.json())
 
+    @allure.title("打开选择商品页面")
+    @pytest.mark.inventory
     def test_inventory(self, login_fixture, base_url):
         """
-        查询物料，获取物料明细
+        查询物料，获取10条物料明细
         :param login_fixture:
         :param base_url:
         :return:
@@ -68,6 +76,8 @@ class TestReturnOfSlowMovingGoods:
                                                           key=lambda s: s['fineQty'])
         print(inventory_response.text)
 
+    @allure.title("返回物料仓库货位明细")
+    @pytest.mark.getGoodsForReturnList
     def test_get_goods_for_return_list(self, login_fixture, base_url):
         """
         获取三条inv_id
@@ -75,10 +85,36 @@ class TestReturnOfSlowMovingGoods:
         :param base_url:
         :return:
         """
-        inv_id_list = [i["invId"] for i in ReturnGlobalVariable.inv_id_info]
-        get_goods_for_return_list_response = get_goods_for_return_list(login_fixture, base_url)
+        # 取出上个接口返回的10条inv_id
+        inv_id_list = ",".join([i["invId"] for i in ReturnGlobalVariable.inv_id_info])
+        # 本条用例接口
+        get_goods_for_return_list_response = get_goods_for_return_list(login_fixture, base_url, inv_id_list)
+        # 取出inv_id
+        for i in get_goods_for_return_list_response.json()["data"]["goods"]:
+            # 用inv_id取出对应的仓库明细
+            for n in get_goods_for_return_list_response.json()["data"]["storage"][i]:
+                # 取仓库明细条件
+                if n["locationNo"] == "KZ001" and n["locationQty"] > 620:
+                    # 赋值仓库id，len为1
+                    ReturnGlobalVariable.get_location_id = n["locationId"]
+                    # 返回符合条件的inv_id
+                    ReturnGlobalVariable.get_inv_id_list.append(i)
+
         print(get_goods_for_return_list_response.text)
 
-    def test_create_draft(self, login_fixture, base_url):
-        create_draft_response = create_draft(login_fixture, base_url)
+    @allure.title("获取物料下的仓库、货位明细")
+    @pytest.mark.getGoodsByStorageAndAreaInfo
+    def test_get_goods_by_storage_and_area_info(self, login_fixture, base_url):
+        """
+        获取每个物料下的仓库、货位明明细
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        for i in ReturnGlobalVariable.get_inv_id_list:
+            get_goods_by_storage_and_area_info_response = get_goods_by_storage_and_area_info(
+                login_fixture, base_url, inv_ids=i, location_id=ReturnGlobalVariable.get_location_id)
+            print(get_goods_by_storage_and_area_info_response.text)
 
+    # def test_create_draft(self, login_fixture, base_url):
+    #     create_draft_response = create_draft(login_fixture, base_url)
