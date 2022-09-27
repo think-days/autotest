@@ -16,6 +16,7 @@ class ReturnGlobalVariable:
     goods_list = {}  # 物料仓库、库存明细
     get_inv_id_list = []  # inv_id列表
     get_location_id = ""  # 仓库id
+    goods_area = {}  # 商品货位
 
 
 @allure.epic("采购模块")
@@ -114,7 +115,8 @@ class TestReturnOfSlowMovingGoods:
         for i in ReturnGlobalVariable.get_inv_id_list:
             get_goods_by_storage_and_area_info_response = get_goods_by_storage_and_area_info(
                 login_fixture, base_url, inv_ids=i, location_id=ReturnGlobalVariable.get_location_id)
-            print(get_goods_by_storage_and_area_info_response.text)
+            ReturnGlobalVariable.goods_area.update(get_goods_by_storage_and_area_info_response.json()["data"]["rows"])
+        print(ReturnGlobalVariable.goods_area)
 
-    # def test_create_draft(self, login_fixture, base_url):
-    #     create_draft_response = create_draft(login_fixture, base_url)
+    def test_create_draft(self, login_fixture, base_url):
+        create_draft_response = create_draft(login_fixture, base_url)

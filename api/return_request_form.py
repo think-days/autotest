@@ -91,11 +91,6 @@ def create_draft(s, base_url) -> Response:
             "rtNum": "1",
             "locationId": 640,
             "locationAreaId": "495238"
-        }, {
-            "invId": "1287",
-            "rtNum": "1",
-            "locationId": 640,
-            "locationAreaId": "495238"
         }],
         "orderType": "30-Cxx-05"
     }

@@ -141,7 +141,6 @@ def get_goods_by_storage_and_area_info(s, base_url, inv_ids, location_id) -> Res
     get_goods_by_storage_and_area_info_response = s.post(url=get_goods_by_storage_and_area_info_url,
                                                          data=get_goods_by_storage_and_area_info_date,
                                                          params=get_goods_by_storage_and_area_info_params)
-    print(get_goods_by_storage_and_area_info_response.json())
     return get_goods_by_storage_and_area_info_response
 
 
