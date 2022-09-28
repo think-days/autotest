@@ -77,37 +77,36 @@ def close_inv_po(s, base_url, goodslist, token, *args, **kwargs) -> Response:
 
 
 # 退货申请单列表（return_order_list）
-def return_order_list(s, base_url, key_words=None, bill_status=None, order_type=None, *args, **kwargs) -> Response:
+def after_sale_list(s, base_url, key_words=None, bill_status=None, order_type=None, *args, **kwargs) -> Response:
     """
     售后申请单查询
     :param s:
     :param base_url:
-    :param key_words:售后订单号
-    :param bill_status:售后订单状态
-    :param order_type:售后订单类型
+    :param key_words:售后订单号, str
+    :param bill_status:售后订单状态, str
+    :param order_type:售后订单类型, str
     :param args:
     :param kwargs:
     :return:
     """
-    return_order_list_url = base_url + "/index.php/po/AfterSale/list"
-    return_order_list_data = {
+    after_sale_list_url = base_url + "/index.php/po/AfterSale/list"
+    after_sale_list_data = {
         "page": 1,
         "limit": 20,
         "keywords": key_words,
         "billStatus": bill_status,
         "orderType": order_type
     }
-    return_order_list_response = s.post(return_order_list_url, data=return_order_list_data)
-    print(return_order_list_response.json())
-    return return_order_list_response
+    after_sale_list_response = s.post(after_sale_list_url, data=after_sale_list_data)
+    return after_sale_list_response
 
 
 def cancel_draft(s, base_url, id_s) -> Response:
     """
-
+    取消草稿单
     :param s:
     :param base_url:
-    :param id_s:
+    :param id_s:草稿单id, str
     :return:
     """
     cancel_draft_url = base_url + "/index.php/po/AfterSale/cancel"
@@ -115,7 +114,6 @@ def cancel_draft(s, base_url, id_s) -> Response:
         "id": id_s
     }
     cancel_draft_response = s.post(cancel_draft_url, data=cancel_draft_data)
-    print(cancel_draft_response.json())
     return cancel_draft_response
 
 

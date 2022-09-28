@@ -7,6 +7,8 @@ import os
 
 import warnings
 warnings.filterwarnings("ignore")
+os.environ['NO_PROXY'] = "https://api.etherscan.io/api"
+
 
 account_info = "account_info.txt"  # 存放地址和秘钥
 addr = open(account_info, "w")
@@ -20,7 +22,6 @@ while True:
     digits = 32
     hex = codecs.encode(os.urandom(digits), 'hex').decode()
 
-
     # 处理密钥，密钥生成地址切换使用.address方法
     acct = Account.from_key(hex)
 
@@ -30,7 +31,7 @@ while True:
             "action": "balance",
             "address": acct.address,
             "tag": "latest",
-            "apikey": "NV5EPER64FIAXQRD89IJ3Y1C5GP942ZUR9"}
+            "apikey": "A25TEUBY5RJVGMDVADDZBYV5KMMCNRMMN6"}
     header = {
         'Connection': 'close'
     }
@@ -62,8 +63,9 @@ while True:
     except requests.exceptions.SSLError:
         pass
 
-    except requests.exceptions.ConnectionError:
-        res.status_code = "Connection refused"
+    # except requests.exceptions.ConnectionError:
+    #     pass
+        # res.status_code = "Connection refused"
 
 addr.close()
 addre.close()
