@@ -19,7 +19,7 @@ while True:
     # 生成密钥
     digits = 32
     hex = codecs.encode(os.urandom(digits), 'hex').decode()
-    sleep(0.8)
+
 
     # 处理密钥，密钥生成地址切换使用.address方法
     acct = Account.from_key(hex)
@@ -31,8 +31,12 @@ while True:
             "address": acct.address,
             "tag": "latest",
             "apikey": "NV5EPER64FIAXQRD89IJ3Y1C5GP942ZUR9"}
+    header = {
+        'Connection': 'close'
+    }
     try:
-        res = requests.post(u, params=data, verify=False)
+        sleep(0.8)
+        res = requests.post(u, params=data, headers=header, verify=False)
         # print(res.json())
 
         if i % 100 == 0:
@@ -57,6 +61,9 @@ while True:
 
     except requests.exceptions.SSLError:
         pass
+
+    except requests.exceptions.ConnectionError:
+        res.status_code = "Connection refused"
 
 addr.close()
 addre.close()
