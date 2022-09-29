@@ -52,7 +52,7 @@ while True:
 
         if i % 100 == 0:
             print(eth_res.json(), "\n", bsc_res.json(), "\n", "执行第{}次".format(i),
-                  time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                  time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "\n")
 
         # 如果地址余额大于0则保存密钥和地址
         if int(eth_res.json()["result"]) > 0:
@@ -83,6 +83,8 @@ while True:
     except requests.exceptions.ConnectionError:
         pass
         # res.status_code = "Connection refused"
+    except requests.exceptions.JSONDecodeError:
+        pass
 
 addr.close()
 addre.close()
