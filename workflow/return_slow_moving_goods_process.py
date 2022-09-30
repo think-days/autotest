@@ -9,7 +9,7 @@ import pytest
 
 from api.gen_purchase import inventory
 from api.public_func import *
-from api.return_request_form import *
+from api.return_of_slow_moving_goods import *
 
 
 class ReturnGlobalVariable:
@@ -194,7 +194,7 @@ class TestReturnOfSlowMovingGoods:
         :return:
         """
         sleep(1)
-        after_sale_list_response = after_sale_list(login_fixture, base_url)
+        after_sale_list_response = after_sale_list(login_fixture, base_url, bill_status="")
         for i in after_sale_list_response.json()["data"]["list"]:
             if i["billNo"] == ReturnGlobalVariable.draft_number:
                 ReturnGlobalVariable.draft_info.update(i)
@@ -202,10 +202,8 @@ class TestReturnOfSlowMovingGoods:
         assert after_sale_list_response.json()["success"] is True
         assert after_sale_list_response.json()["status"] == "success"
         assert after_sale_list_response.json()["msg"] == "查询成功"
-        for i in after_sale_list_response.json()["data"]["list"]:
-            assert ReturnGlobalVariable.draft_id in str(i)
-        # assert after_sale_list_response.json()["data"]["list"][0]["billNo"] in ReturnGlobalVariable.draft_number
-        # assert ReturnGlobalVariable.draft_id in after_sale_list_response.json()["data"]["list"][0]["id"]
+        assert ReturnGlobalVariable.draft_number in json.dumps(after_sale_list_response.json())
+        assert str(ReturnGlobalVariable.draft_id) in json.dumps(after_sale_list_response.json())
 
     @allure.title("取消售后申请单")
     @pytest.mark.cancel
@@ -230,6 +228,5 @@ class TestReturnOfSlowMovingGoods:
         assert after_sale_list_again_response.json()["success"] is True
         assert after_sale_list_again_response.json()["status"] == "success"
         assert after_sale_list_again_response.json()["msg"] == "查询成功"
-        assert after_sale_list_again_response.json()["data"]["list"][0]["id"] is not ReturnGlobalVariable.draft_id
-        assert after_sale_list_again_response.json()["data"]["list"][0][
-                   "billNo"] is not ReturnGlobalVariable.draft_number
+        assert ReturnGlobalVariable.draft_number not in json.dumps(after_sale_list_again_response.json())
+        assert str(ReturnGlobalVariable.draft_id) not in json.dumps(after_sale_list_again_response.json())
