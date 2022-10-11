@@ -90,3 +90,9 @@ addr.close()
 addre.close()
 
 print(i)
+hexdigits = "0123456789ABCDEF"
+random_digits = "".join([hexdigits[random.randint(0, 0xF)] for _ in range(64)])
+print(random_digits)
+# hex = "E7991462904432D23950471BFFB43EDB27115FE4C97FCAD8FFB03589582C7682"
+acct = Account.from_key(random_digits)
+print(acct.address)
