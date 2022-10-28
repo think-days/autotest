@@ -1,5 +1,6 @@
 # 不良品退货流程
 import heapq
+import random
 import re
 import allure
 import pytest
@@ -8,9 +9,9 @@ from api.public_func import get_contact_2_select
 
 
 class DefectiveGlobalVariable:
-    contact_info = {}
+    contact_info = ""
     order_goods_info = {}
-    pass
+    get_order_goods_info = {}
 
 
 @allure.epic("采购模块")
@@ -32,7 +33,9 @@ class TestDefectiveProductReturn:
         """
         get_contact_2_select_res = get_contact_2_select(login_fixture, base_url)
         print(get_contact_2_select_res.text)
-        DefectiveGlobalVariable.contact_info = get_contact_2_select_res
+        DefectiveGlobalVariable.contact_info = \
+            get_contact_2_select_res.json()["data"][random.randint(0, len(get_contact_2_select_res.json()["data"]))][
+                "id"]
         assert get_contact_2_select_res.json()["success"] is True
         assert get_contact_2_select_res.json()["status"] == "success"
         assert get_contact_2_select_res.json()["msg"] == "查询成功！"
@@ -69,7 +72,8 @@ class TestDefectiveProductReturn:
                 get_goods.append(i)
         DefectiveGlobalVariable.order_goods_info = heapq.nlargest(1, get_goods, key=lambda s: s["inQty"] - s["lockNum"])
         print(get_return_goods_res.text)
-        assert get_return_goods_res.json()["data"]["page"]
+        assert get_return_goods_res.json()["data"]["page"] == 1
+        assert get_return_goods_res.json()["data"]["rows"] is not None
 
     @allure.title("选择商品")
     @pytest.mark.getReturnGoodsForSoCode
@@ -78,4 +82,61 @@ class TestDefectiveProductReturn:
         get_return_goods_for_so_code_res = get_return_goods_for_so_code(login_fixture, base_url,
                                                                         DefectiveGlobalVariable.order_goods_info[0][
                                                                             "id"])
-        print(get_return_goods_for_so_code_res.text)
+        print("-------", get_return_goods_for_so_code_res.text)
+        assert get_return_goods_for_so_code_res.json()["unitId"] == DefectiveGlobalVariable.order_goods_info[0]["invId"]
+        assert get_return_goods_for_so_code_res.json()["srcOrderId"] == DefectiveGlobalVariable.order_goods_info[0][
+            "iid"]
+        print("--------", DefectiveGlobalVariable.order_goods_info)
+        assert get_return_goods_for_so_code_res.json()["lockNum"] == DefectiveGlobalVariable.order_goods_info[0][
+            "lockNum"]
+
+    @allure.title("提交预览不良品退货")
+    @pytest.mark.getReturnGoodsForSoCodeAgain
+    def test_get_return_goods_for_so_code_again(self, login_fixture, base_url):
+        get_return_goods_for_so_code_again_res = get_return_goods_for_so_code_again(
+            login_fixture, base_url, DefectiveGlobalVariable.order_goods_info[0]["id"])
+        DefectiveGlobalVariable.get_order_goods_info = get_return_goods_for_so_code_again_res.json()
+        print(get_return_goods_for_so_code_again_res.text)
+        assert get_return_goods_for_so_code_again_res.json()["unitId"] == DefectiveGlobalVariable.order_goods_info[0][
+            "invId"]
+        assert get_return_goods_for_so_code_again_res.json()["srcOrderId"] == \
+               DefectiveGlobalVariable.order_goods_info[0]["iid"]
+        assert get_return_goods_for_so_code_again_res.json()["lockNum"] == DefectiveGlobalVariable.order_goods_info[0][
+            "lockNum"]
+
+    @allure.title("创建不良品退货订单")
+    @pytest.mark.after_sale_create
+    def test_after_sale_create(self, login_fixture, base_url):
+        """
+        创建不良品退货订单，普通订单正常提交。
+        物料是蓄电池：上传蓄电池所需要的额外参数。
+        物料是轮胎：上传轮胎所需要的额外参数。
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        # 本地图片和视频路径,仅在本地环境使用，更换环境则更换图片路径
+        pictures_video = [
+            "C:\\Users\\lumia\\Pictures\\9e39916b5c2b07d00c5900a481bd6146e3ee5811.jpg",
+            "C:\\Users\\lumia\\Pictures\\0121952da2d96a4e1b8dd1ae6fb7b636.jpg",
+            "C:\\Users\\lumia\\Pictures\\lALPD26eL7xLjdvNAfDNBNo_1242_496.jpg",
+            "C:\\Users\\lumia\\Pictures\\20200507_115152.mp4"
+        ]
+
+        after_sale_create_res = after_sale_create(
+                            s=login_fixture,
+                            base_url=base_url,
+                            description="原因",
+                            so_code_id=DefectiveGlobalVariable.order_goods_info[0]["id"],
+                            src_order_id=DefectiveGlobalVariable.order_goods_info[0]["iid"],
+                            contact_id=DefectiveGlobalVariable.contact_info,
+                            install_car_model="安装车型",
+                            install_time=time.strftime("%Y-%m-%d", time.gmtime()),
+                            install_mileage="100",
+                            need_extra_voucher=DefectiveGlobalVariable.get_order_goods_info["needExtraVoucher"],
+                            need_video=DefectiveGlobalVariable.get_order_goods_info["needVideo"],
+                            pictures=pictures_video)
+        print(after_sale_create_res.text)
+        assert after_sale_create_res.json()["success"] is True
+        assert after_sale_create_res.json()["status"] == "success"
+        assert after_sale_create_res.json()["msg"] == "保存草稿成功！"

@@ -113,8 +113,8 @@ def get_return_goods_for_so_code_again(s, base_url, so_code_id, *args, **kwargs)
     return get_return_goods_for_so_code_again_response
 
 
-def after_sale_create(s, base_url, description, so_code_id, src_order_id, rt_num, contact_id, install_car_model,
-                      install_time, install_mileage, oss_image_link, need_extra_voucher=0, need_video=0, *args, **kwargs) -> Response:
+def after_sale_create(s, base_url, description, so_code_id, src_order_id, contact_id, install_car_model, install_time,
+                      install_mileage, need_extra_voucher, need_video, pictures, rt_num=1, *args, **kwargs) -> Response:
     """
     创建草稿单
     :param s:
@@ -127,27 +127,23 @@ def after_sale_create(s, base_url, description, so_code_id, src_order_id, rt_num
     :param install_car_model:安装车型,str
     :param install_time:安装时间,2020-12-12
     :param install_mileage:行驶里程,int
-    :param oss_image_link:上传图片后的oss链接,list
-    :param need_extra_voucher:是否需要额外售后凭证,0:不需要,1:需要
-    :param need_video:
+    :param pictures:图片和视频的绝对路径
+    :param need_extra_voucher:蓄电池凭证，是否需要额外售后凭证,0:不需要,1:需要
+    :param need_video:轮胎凭证，物料是否需要上传视频,0:不需要,1:需要
     :param args:
     :param kwargs:
     :return:
     """
+    oss_image_link = []
+    oss_video_link = ""
 
-    # 本地图片路径,仅在本地环境使用，更换环境则更换图片路径
-    pictures = [
-        "C:\\Users\\lumia\\Pictures\\9e39916b5c2b07d00c5900a481bd6146e3ee5811.jpg",
-        "C:\\Users\\lumia\\Pictures\\0121952da2d96a4e1b8dd1ae6fb7b636.jpg",
-        "C:\\Users\\lumia\\Pictures\\lALPD26eL7xLjdvNAfDNBNo_1242_496.jpg"
-    ]
-    oss_link = []
-    # 获取上传图片后的链接
+    # 获取上传图片和视频后的链接
     for i in pictures:
-        pictures_read = open(i, "rb")
-        res = upload_file_to_oss(s, base_url, pictures_read)
-        oss_link.append(res.json()["fileUrl"])
-        pictures_read.close()
+        res = upload_file_to_oss(s, base_url, file_path=i)
+        if "https://kz-open-beta.oss-cn-hangzhou" in res.json()["fileUrl"]:
+            oss_image_link.append(res.json()["fileUrl"])
+        if "http://kz-dgj.oss-cn-hangzhou" in res.json()["fileUrl"]:
+            oss_video_link = res.json()["fileUrl"]
 
     after_sale_create_url = base_url + "/index.php//po/AfterSale/create"
     after_sale_create_data = {
@@ -165,14 +161,29 @@ def after_sale_create(s, base_url, description, so_code_id, src_order_id, rt_num
             "install_time": install_time,
             "install_mileage": install_mileage,
             "image": oss_image_link,
-            **kwargs
         },
-        "need_extra_voucher": need_extra_voucher,
-        "need_video": need_video,
+        "need_extra_voucher": 0,
+        "need_video": 0,
         "orderType": "30-Cxx-06",
     }
+    # 如果物料是蓄电池，则需要传入下列参数
+    if need_extra_voucher == "true":
+        after_sale_create_data["after_sale_certificate"].update({"tagged_cca": "100",  # 标注CCA
+                                                                 "measured_cca": "100",  # 实测CCA
+                                                                 "date_code": "221010",  # 日期码
+                                                                 "voltage": "24",  # 电压
+                                                                 "color": 1,  # 电眼颜色，1:无电眼，2:绿色，3:黑色，4:白色
+                                                                 "product_code": "123VS"  # 产品识别码
+                                                                 })
+        after_sale_create_data.update({"need_extra_voucher": 1})
+    # 如果物料是轮胎，则需要传入下列参数
+    if need_video == "true":
+        after_sale_create_data["after_sale_certificate"].update({"car_number": "浙A12345",  # 车牌
+                                                                 "production_date": "1232",  # 轮胎生产周期
+                                                                 "video": oss_video_link  # 视频链接
+                                                                 })
+        after_sale_create_data["need_video"] = 1
     after_sale_create_response = s.post(after_sale_create_url, json=after_sale_create_data)
-    print(after_sale_create_response.text)
     return after_sale_create_response
 
 

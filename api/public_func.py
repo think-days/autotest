@@ -2,7 +2,11 @@
 公共接口
 """
 import json
+import os
+
+from filetype import filetype
 from requests import Response
+from requests_toolbelt import MultipartEncoder
 
 
 def inv_location(s, base_url, *args, **kwargs) -> Response:
@@ -153,19 +157,32 @@ def get_contact_2_select(s, base_url, *args, **kwargs) -> Response:
 
 
 # 不良品退货页面，上传图片
-def upload_file_to_oss(s, base_url, file_b) -> Response:
+def upload(filepath="files/122.png"):
+    """根据文件路径，自动获取文件名称和文件mime类型"""
+    kind = filetype.guess(filepath)
+    if kind is None:
+        print('Cannot guess file type!')
+        return
+    # 媒体类型，如：image/png
+    mime_type = kind.mime
+    # 文件真实路径
+    file_real_path = os.path.realpath(filepath)
+    # 获取文件名 122.png
+    file_name = os.path.split(file_real_path)[-1]
+    return file_name, open(file_real_path, "rb"), mime_type
+
+
+def upload_file_to_oss(s, base_url, file_path) -> Response:
     """
-    上传图片接口
+    上传图片/视频接口
     :param s:
     :param base_url:
-    :param file_b:二进制文件，需要先将图片转换为二进制
+    :param file_path:文件绝对路径
     :return:
     """
     upload_file_to_oss_url = base_url + "/index.php/file/ossFile/uploadFileToOSS"
-    upload_file_to_oss_data = {
-        "file": file_b
-    }
-    upload_file_to_oss_response = s.post(upload_file_to_oss_url, files=upload_file_to_oss_data)
+    m = MultipartEncoder(fields={"file": upload(filepath=file_path)})
+    upload_file_to_oss_response = s.post(upload_file_to_oss_url, data=m, headers={'Content-Type': m.content_type})
     return upload_file_to_oss_response
 
 # if __name__ == '__main__':

@@ -11,7 +11,7 @@
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://rr-bp187kf6a88at7xm0.mysql.rds.aliyuncs.com:3306</jdbc-url>
+      <jdbc-url>jdbc:mysql://rr-bp1dhhcc1yww3w67h.mysql.rds.aliyuncs.com:3306</jdbc-url>
     </data-source>
     <data-source source="LOCAL" name="ops-staging" uuid="306572a7-cccb-4bbe-b319-56f1c784e486">
       <driver-ref>mysql.8</driver-ref>
