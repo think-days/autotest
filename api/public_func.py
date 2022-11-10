@@ -101,7 +101,7 @@ def after_sale_list(s, base_url, key_words=None, bill_status=None, order_type=No
 
 def cancel_draft(s, base_url, id_s) -> Response:
     """
-    取消草稿单
+    取消订单
     :param s:
     :param base_url:
     :param id_s:草稿单id, str

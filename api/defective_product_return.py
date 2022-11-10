@@ -28,7 +28,6 @@ def inv_po(s, base_url, *args, **kwargs) -> Response:
         "sord": "asc"
     }
     inv_po_response = s.post(inv_po_url, data=inv_po_data, params=inv_po_param)
-    # print(inv_po_response.text)
     return inv_po_response
 
 
@@ -64,7 +63,6 @@ def get_return_goods(s, base_url, po_order=None, sku_id=None, product_code=None,
         "condition": "skuid"
     }
     get_return_goods_response = s.post(get_return_goods_url, data=get_return_goods_data, params=get_return_goods_params)
-    print(get_return_goods_response.text)
     return get_return_goods_response
 
 
@@ -84,7 +82,6 @@ def get_return_goods_for_so_code(s, base_url, so_code_id, *args, **kwargs) -> Re
     }
     get_return_goods_for_so_code_response = s.get(get_return_goods_for_so_code_url,
                                                   params=get_return_goods_for_so_code_params)
-    print(get_return_goods_for_so_code_response.text)
     return get_return_goods_for_so_code_response
 
 
@@ -109,7 +106,6 @@ def get_return_goods_for_so_code_again(s, base_url, so_code_id, *args, **kwargs)
     get_return_goods_for_so_code_again_response = s.post(get_return_goods_for_so_code_again_url,
                                                          data=get_return_goods_for_so_code_again_data,
                                                          params=get_return_goods_for_so_code_again_params)
-    print(get_return_goods_for_so_code_again_response.text)
     return get_return_goods_for_so_code_again_response
 
 
@@ -202,7 +198,6 @@ def get_split_order_back_info(s, base_url, defective_order_id, *args, **kwargs) 
         "orderId": defective_order_id
     }
     get_split_order_back_info_response = s.post(get_split_order_back_info_url, data=get_split_order_back_info_data)
-    print(get_split_order_back_info_response.text)
     return get_split_order_back_info_response
 
 # submit_draft()

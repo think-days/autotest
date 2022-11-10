@@ -1,17 +1,23 @@
 # 不良品退货流程
 import heapq
+import json
 import random
 import re
 import allure
 import pytest
+from jsonpath import jsonpath
+
 from api.defective_product_return import *
-from api.public_func import get_contact_2_select
+from api.public_func import get_contact_2_select, cancel_draft, after_sale_list
+from api.return_of_slow_moving_goods import submit_draft
 
 
 class DefectiveGlobalVariable:
     contact_info = ""
     order_goods_info = {}
     get_order_goods_info = {}
+    get_order_id = ""
+    get_order_no = ""
 
 
 @allure.epic("采购模块")
@@ -32,10 +38,8 @@ class TestDefectiveProductReturn:
         :return:
         """
         get_contact_2_select_res = get_contact_2_select(login_fixture, base_url)
-        print(get_contact_2_select_res.text)
-        DefectiveGlobalVariable.contact_info = \
-            get_contact_2_select_res.json()["data"][random.randint(0, len(get_contact_2_select_res.json()["data"]))][
-                "id"]
+        print(get_contact_2_select_res.json())
+        DefectiveGlobalVariable.contact_info = get_contact_2_select_res.json()["data"][random.randint(0, len(get_contact_2_select_res.json()["data"]))]["id"]
         assert get_contact_2_select_res.json()["success"] is True
         assert get_contact_2_select_res.json()["status"] == "success"
         assert get_contact_2_select_res.json()["msg"] == "查询成功！"
@@ -71,24 +75,17 @@ class TestDefectiveProductReturn:
             if i["locationId"] == "638" and i["status"] == "1" and i["inQty"] > i["lockNum"] and i["isGift"] == "否":
                 get_goods.append(i)
         DefectiveGlobalVariable.order_goods_info = heapq.nlargest(1, get_goods, key=lambda s: s["inQty"] - s["lockNum"])
-        print(get_return_goods_res.text)
+        print(get_return_goods_res.json())
         assert get_return_goods_res.json()["data"]["page"] == 1
         assert get_return_goods_res.json()["data"]["rows"] is not None
 
     @allure.title("选择商品")
     @pytest.mark.getReturnGoodsForSoCode
     def test_get_return_goods_for_so_code(self, login_fixture, base_url):
-        print(DefectiveGlobalVariable.order_goods_info)
-        get_return_goods_for_so_code_res = get_return_goods_for_so_code(login_fixture, base_url,
-                                                                        DefectiveGlobalVariable.order_goods_info[0][
-                                                                            "id"])
-        print("-------", get_return_goods_for_so_code_res.text)
+        get_return_goods_for_so_code_res = get_return_goods_for_so_code(login_fixture, base_url, DefectiveGlobalVariable.order_goods_info[0]["id"])
+        print(get_return_goods_for_so_code_res.json())
         assert get_return_goods_for_so_code_res.json()["unitId"] == DefectiveGlobalVariable.order_goods_info[0]["invId"]
-        assert get_return_goods_for_so_code_res.json()["srcOrderId"] == DefectiveGlobalVariable.order_goods_info[0][
-            "iid"]
-        print("--------", DefectiveGlobalVariable.order_goods_info)
-        assert get_return_goods_for_so_code_res.json()["lockNum"] == DefectiveGlobalVariable.order_goods_info[0][
-            "lockNum"]
+        assert get_return_goods_for_so_code_res.json()["srcOrderId"] == DefectiveGlobalVariable.order_goods_info[0]["iid"]
 
     @allure.title("提交预览不良品退货")
     @pytest.mark.getReturnGoodsForSoCodeAgain
@@ -96,13 +93,9 @@ class TestDefectiveProductReturn:
         get_return_goods_for_so_code_again_res = get_return_goods_for_so_code_again(
             login_fixture, base_url, DefectiveGlobalVariable.order_goods_info[0]["id"])
         DefectiveGlobalVariable.get_order_goods_info = get_return_goods_for_so_code_again_res.json()
-        print(get_return_goods_for_so_code_again_res.text)
-        assert get_return_goods_for_so_code_again_res.json()["unitId"] == DefectiveGlobalVariable.order_goods_info[0][
-            "invId"]
-        assert get_return_goods_for_so_code_again_res.json()["srcOrderId"] == \
-               DefectiveGlobalVariable.order_goods_info[0]["iid"]
-        assert get_return_goods_for_so_code_again_res.json()["lockNum"] == DefectiveGlobalVariable.order_goods_info[0][
-            "lockNum"]
+        print(get_return_goods_for_so_code_again_res.json())
+        assert get_return_goods_for_so_code_again_res.json()["unitId"] == DefectiveGlobalVariable.order_goods_info[0]["invId"]
+        assert get_return_goods_for_so_code_again_res.json()["srcOrderId"] == DefectiveGlobalVariable.order_goods_info[0]["iid"]
 
     @allure.title("创建不良品退货订单")
     @pytest.mark.after_sale_create
@@ -124,19 +117,100 @@ class TestDefectiveProductReturn:
         ]
 
         after_sale_create_res = after_sale_create(
-                            s=login_fixture,
-                            base_url=base_url,
-                            description="原因",
-                            so_code_id=DefectiveGlobalVariable.order_goods_info[0]["id"],
-                            src_order_id=DefectiveGlobalVariable.order_goods_info[0]["iid"],
-                            contact_id=DefectiveGlobalVariable.contact_info,
-                            install_car_model="安装车型",
-                            install_time=time.strftime("%Y-%m-%d", time.gmtime()),
-                            install_mileage="100",
-                            need_extra_voucher=DefectiveGlobalVariable.get_order_goods_info["needExtraVoucher"],
-                            need_video=DefectiveGlobalVariable.get_order_goods_info["needVideo"],
-                            pictures=pictures_video)
-        print(after_sale_create_res.text)
+            s=login_fixture,
+            base_url=base_url,
+            description="原因",
+            so_code_id=DefectiveGlobalVariable.order_goods_info[0]["id"],
+            src_order_id=DefectiveGlobalVariable.order_goods_info[0]["iid"],
+            contact_id=DefectiveGlobalVariable.contact_info,
+            install_car_model="安装车型",
+            install_time=time.strftime("%Y-%m-%d", time.gmtime()),
+            install_mileage="100",
+            need_extra_voucher=DefectiveGlobalVariable.get_order_goods_info["needExtraVoucher"],
+            need_video=DefectiveGlobalVariable.get_order_goods_info["needVideo"],
+            pictures=pictures_video)
+
+        print(after_sale_create_res.json())
+        DefectiveGlobalVariable.get_order_id = after_sale_create_res.json()["data"]["order_id"]
+        DefectiveGlobalVariable.get_order_no = after_sale_create_res.json()["data"]["bill_no"]
         assert after_sale_create_res.json()["success"] is True
         assert after_sale_create_res.json()["status"] == "success"
         assert after_sale_create_res.json()["msg"] == "保存草稿成功！"
+
+    @allure.title("查询生成的草稿单")
+    @pytest.mark.getSplitOrderBackInfo
+    def test_get_split_order_back_info(self, login_fixture, base_url):
+        """
+        查询生成的草稿单
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        get_split_order_back_info_res = get_split_order_back_info(login_fixture, base_url, DefectiveGlobalVariable.get_order_id)
+        print(get_split_order_back_info_res.json())
+        assert get_split_order_back_info_res.json()["success"] is True
+        assert get_split_order_back_info_res.json()["status"] == "success"
+        assert get_split_order_back_info_res.json()["msg"] == "查询成功！"
+        assert get_split_order_back_info_res.json()["data"] is not None
+
+    @allure.title("提交不良品退货")
+    @pytest.mark.defective_product_submit_draft
+    def test_defective_product_submit_draft(self, login_fixture, base_url):
+        """
+        提交不良品退货订单
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        defective_product_submit_draft_res = submit_draft(login_fixture, base_url, DefectiveGlobalVariable.get_order_id)
+        print(defective_product_submit_draft_res.json())
+        assert defective_product_submit_draft_res.json()["success"] is True
+        assert defective_product_submit_draft_res.json()["status"] == "success"
+        assert defective_product_submit_draft_res.json()["msg"] == "提交订单成功"
+
+    @allure.title("退货单列表")
+    @pytest.mark.defective_product_after_sale_list
+    def test_defective_product_after_sale_list(self, login_fixture, base_url):
+        """
+        返回退货申请单页面，查询该订单
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        defective_product_after_sale_list_res = after_sale_list(login_fixture, base_url, bill_status="")
+        print(defective_product_after_sale_list_res.json())
+        assert defective_product_after_sale_list_res.json()["success"] is True
+        assert defective_product_after_sale_list_res.json()["status"] == "success"
+        assert defective_product_after_sale_list_res.json()["msg"] == "查询成功"
+        assert DefectiveGlobalVariable.get_order_no in json.dumps(defective_product_after_sale_list_res.json())
+
+    @allure.title("取消不良品订单")
+    @pytest.mark.defective_product_cancel_draft
+    def test_defective_product_cancel_draft(self, login_fixture, base_url):
+        """
+        取消该不良品订单
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        defective_product_cancel_draft_res = cancel_draft(login_fixture, base_url, DefectiveGlobalVariable.get_order_id)
+        print(defective_product_cancel_draft_res.text)
+        assert defective_product_cancel_draft_res.json()["success"] is True
+        assert defective_product_cancel_draft_res.json()["status"] == "success"
+        assert defective_product_cancel_draft_res.json()["msg"] == "取消订单成功"
+
+    def test_defective_product_after_sale_list_again(self, login_fixture, base_url):
+        """
+        售后申请单查询列表
+        :param login_fixture:
+        :param base_url:
+        :return:
+        """
+        defective_product_after_sale_list_again_res = after_sale_list(login_fixture, base_url, bill_status="")
+        print(defective_product_after_sale_list_again_res.json())
+        assert defective_product_after_sale_list_again_res.json()["success"] is True
+        assert defective_product_after_sale_list_again_res.json()["status"] == "success"
+        assert defective_product_after_sale_list_again_res.json()["msg"] == "查询成功"
+        assert DefectiveGlobalVariable.get_order_no in json.dumps(defective_product_after_sale_list_again_res.json())
+        assert jsonpath(defective_product_after_sale_list_again_res.json(), "$..list[?(@.billNo=='{}')].billStatus".format(DefectiveGlobalVariable.get_order_no))[0] == 9
+        assert jsonpath(defective_product_after_sale_list_again_res.json(), "$..list[?(@.billNo=='{}')].billStatusName".format(DefectiveGlobalVariable.get_order_no))[0] == "已关闭"

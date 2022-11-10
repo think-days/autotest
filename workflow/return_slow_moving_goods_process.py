@@ -6,6 +6,7 @@ from time import sleep
 
 import allure
 import pytest
+from jsonpath import jsonpath
 
 from api.gen_purchase import inventory
 from api.public_func import *
@@ -203,7 +204,6 @@ class TestReturnOfSlowMovingGoods:
         assert after_sale_list_response.json()["status"] == "success"
         assert after_sale_list_response.json()["msg"] == "查询成功"
         assert ReturnGlobalVariable.draft_number in json.dumps(after_sale_list_response.json())
-        assert str(ReturnGlobalVariable.draft_id) in json.dumps(after_sale_list_response.json())
 
     @allure.title("取消售后申请单")
     @pytest.mark.cancel
@@ -223,10 +223,11 @@ class TestReturnOfSlowMovingGoods:
         :param base_url:
         :return:
         """
-        after_sale_list_again_response = after_sale_list(login_fixture, base_url)
+        after_sale_list_again_response = after_sale_list(login_fixture, base_url, bill_status="")
         print(after_sale_list_again_response.text)
         assert after_sale_list_again_response.json()["success"] is True
         assert after_sale_list_again_response.json()["status"] == "success"
         assert after_sale_list_again_response.json()["msg"] == "查询成功"
-        assert ReturnGlobalVariable.draft_number not in json.dumps(after_sale_list_again_response.json())
-        assert str(ReturnGlobalVariable.draft_id) not in json.dumps(after_sale_list_again_response.json())
+        assert ReturnGlobalVariable.draft_number in json.dumps(after_sale_list_again_response.json())
+        assert jsonpath(after_sale_list_again_response.json(), "$..list[?(@.billNo=='{}')].billStatus".format(ReturnGlobalVariable.draft_number))[0] == 9
+        assert jsonpath(after_sale_list_again_response.json(), "$..list[?(@.billNo=='{}')].billStatusName".format(ReturnGlobalVariable.draft_number))[0] == "已关闭"

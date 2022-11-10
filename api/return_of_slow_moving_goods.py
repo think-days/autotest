@@ -114,10 +114,10 @@ def get_split_order_back_info(s, base_url, order_id, *args, **kwargs) -> Respons
 
 def submit_draft(s, base_url, order_id, *args, **kwargs) -> Response:
     """
-    滞销品退货提交订单
+    退货提交订单
     :param s:
     :param base_url:
-    :param order_id: 草稿单ID，来自create_draft
+    :param order_id: 订单ID，来自create_draft
     :return:
     """
     submit_url = base_url + "/index.php/po/AfterSale/submit"
