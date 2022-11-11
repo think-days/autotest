@@ -53,7 +53,7 @@ class TestDefectiveProductReturn:
         :param base_url:
         :return:
         """
-        inv_po_res = inv_po(login_fixture, base_url)
+        inv_po_res = inv_po_return_bad_goods_order(login_fixture, base_url)
         print(inv_po_res.text)
         assert re.findall("<title>(.+?)</title>", inv_po_res.text) == ['快准车服-站管家']
         assert re.findall("<label>(.+?)</label>", inv_po_res.text) == ['退货类型:', '单据日期:', '单据编号:']
@@ -69,7 +69,7 @@ class TestDefectiveProductReturn:
         :return:
         """
         get_return_goods_res = get_return_goods(login_fixture, base_url)
-        # 从返回的字典中取出一条入库数量大于锁定数量最多的物料
+        # 从返回的字典中取出一条入库数量大于锁定数量并且数量最多的物料
         get_goods = []
         for i in get_return_goods_res.json()["data"]["rows"]:
             if i["locationId"] == "638" and i["status"] == "1" and i["inQty"] > i["lockNum"] and i["isGift"] == "否":

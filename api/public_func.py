@@ -185,6 +185,20 @@ def upload_file_to_oss(s, base_url, file_path) -> Response:
     upload_file_to_oss_response = s.post(upload_file_to_oss_url, data=m, headers={'Content-Type': m.content_type})
     return upload_file_to_oss_response
 
+
+# 创建退货单
+def create_return_goods_order(s, base_url, create_data) -> Response:
+    """
+    创建退货单，根据不同的退货单类型传入不同的参数，需外部传参
+    :param s:
+    :param base_url:
+    :param create_data:
+    :return:
+    """
+    create_url = base_url + "/index.php/po/AfterSale/create"
+    create_response = s.post(create_url, json=create_data)
+    return create_response
+
 # if __name__ == '__main__':
 # s = requests.Session()
 # base_url = "http://dgj-staging.kzmall.cc"

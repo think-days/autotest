@@ -3,10 +3,10 @@
 """
 import time
 from requests import Response
-from api.public_func import upload_file_to_oss
+from api.public_func import upload_file_to_oss, create_return_goods_order
 
 
-def inv_po(s, base_url, *args, **kwargs) -> Response:
+def inv_po_return_bad_goods_order(s, base_url, *args, **kwargs) -> Response:
     """
     返回HTML页面
     :param s:
@@ -141,7 +141,6 @@ def after_sale_create(s, base_url, description, so_code_id, src_order_id, contac
         if "http://kz-dgj.oss-cn-hangzhou" in res.json()["fileUrl"]:
             oss_video_link = res.json()["fileUrl"]
 
-    after_sale_create_url = base_url + "/index.php//po/AfterSale/create"
     after_sale_create_data = {
         "description": description,
         "entries": [
@@ -179,7 +178,7 @@ def after_sale_create(s, base_url, description, so_code_id, src_order_id, contac
                                                                  "video": oss_video_link  # 视频链接
                                                                  })
         after_sale_create_data["need_video"] = 1
-    after_sale_create_response = s.post(after_sale_create_url, json=after_sale_create_data)
+    after_sale_create_response = create_return_goods_order(s, base_url, after_sale_create_data)
     return after_sale_create_response
 
 
