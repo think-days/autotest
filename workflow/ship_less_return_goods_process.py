@@ -55,11 +55,11 @@ class TestShipLessReturnGoods:
         get_goods = []
         for i in get_return_goods_type_one_res.json()["data"]["rows"]:
             if i["status"] == "1" and i["locationId"] == get_inv_location[0] and i["inQty"] > i["lockNum"] and i[
-                "isGift"] == "否":
+                    "isGift"] == "否":
                 get_goods.append(i)
         ShipLessGlobalVariable.ship_less_goods_info = heapq.nlargest(2, get_goods,
                                                                      key=lambda s: s["iid"] == s["iid"] and s["inQty"] -
-                                                                                   s["lockNum"])
+                                                                     s["lockNum"])
         print(get_return_goods_type_one_res.text)
         print(ShipLessGlobalVariable.ship_less_goods_info)
         assert get_return_goods_type_one_res.json()["data"]["records"] >= "1"
