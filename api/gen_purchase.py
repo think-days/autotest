@@ -5,8 +5,6 @@
 import json
 import os
 from time import sleep
-
-import requests
 from requests import Response
 
 # 绕过代理访问，否则挂代理时会报错requests.exceptions.ProxyError代理错误

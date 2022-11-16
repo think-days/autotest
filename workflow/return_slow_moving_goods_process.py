@@ -167,8 +167,8 @@ class TestReturnOfSlowMovingGoods:
         :param base_url:
         :return:
         """
-        get_split_order_back_info_response = get_split_order_back_info(login_fixture, base_url,
-                                                                       ReturnGlobalVariable.draft_id)
+        get_split_order_back_info_response = return_slow_moving_get_split_order_back_info(login_fixture, base_url,
+                                                                                          ReturnGlobalVariable.draft_id)
         print(get_split_order_back_info_response.text)
         assert get_split_order_back_info_response.json()["success"] is True
         assert get_split_order_back_info_response.json()["status"] == "success"
@@ -179,7 +179,7 @@ class TestReturnOfSlowMovingGoods:
     @allure.title("提交草稿单")
     @pytest.mark.submit
     def test_submit_draft(self, login_fixture, base_url):
-        submit_draft_response = submit_draft(login_fixture, base_url, ReturnGlobalVariable.draft_id)
+        submit_draft_response = return_slow_submit_draft(login_fixture, base_url, ReturnGlobalVariable.draft_id)
         print(submit_draft_response.text)
         assert submit_draft_response.json()["success"] is True
         assert submit_draft_response.json()["status"] == "success"
@@ -229,5 +229,8 @@ class TestReturnOfSlowMovingGoods:
         assert after_sale_list_again_response.json()["status"] == "success"
         assert after_sale_list_again_response.json()["msg"] == "查询成功"
         assert ReturnGlobalVariable.draft_number in json.dumps(after_sale_list_again_response.json())
-        assert jsonpath(after_sale_list_again_response.json(), "$..list[?(@.billNo=='{}')].billStatus".format(ReturnGlobalVariable.draft_number))[0] == 9
-        assert jsonpath(after_sale_list_again_response.json(), "$..list[?(@.billNo=='{}')].billStatusName".format(ReturnGlobalVariable.draft_number))[0] == "已关闭"
+        assert jsonpath(after_sale_list_again_response.json(),
+                        "$..list[?(@.billNo=='{}')].billStatus".format(ReturnGlobalVariable.draft_number))[0] == 9
+        assert jsonpath(after_sale_list_again_response.json(),
+                        "$..list[?(@.billNo=='{}')].billStatusName".format(ReturnGlobalVariable.draft_number))[
+                   0] == "已关闭"

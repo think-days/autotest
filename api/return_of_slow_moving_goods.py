@@ -3,6 +3,8 @@
 """
 from requests import Response
 
+from api.public_func import get_split_order_back_info, submit_draft
+
 
 def first_return_open(s, base_url, *args, **kwargs) -> Response:
     """
@@ -94,25 +96,22 @@ def create_draft(s, base_url, goods_area, *args, **kwargs) -> Response:
     return create_response
 
 
-def get_split_order_back_info(s, base_url, order_id, *args, **kwargs) -> Response:
+def return_slow_moving_get_split_order_back_info(s, base_url, draft_id, *args, **kwargs) -> Response:
     """
-    滞销品退货草稿单创建完成后查询该草稿单
+    查询滞销品退货草稿单
     :param s:
     :param base_url:
-    :param order_id:草稿单ID，来自create_draft
+    :param draft_id: 滞销品退货草稿单ID
     :param args:
     :param kwargs:
     :return:
     """
-    get_split_order_back_info_url = base_url + "/index.php/scm/invPo/getSplitOrderBackInfo"
-    get_split_order_back_info_data = {
-        "orderId": order_id
-    }
-    get_split_order_back_info_response = s.post(get_split_order_back_info_url, data=get_split_order_back_info_data)
-    return get_split_order_back_info_response
+    return_slow_moving_get_split_order_back_info_response = get_split_order_back_info(s, base_url, draft_id)
+    print(return_slow_moving_get_split_order_back_info_response.text)
+    return return_slow_moving_get_split_order_back_info_response
 
 
-def submit_draft(s, base_url, order_id, *args, **kwargs) -> Response:
+def return_slow_submit_draft(s, base_url, order_id, *args, **kwargs) -> Response:
     """
     退货提交订单
     :param s:
@@ -120,13 +119,9 @@ def submit_draft(s, base_url, order_id, *args, **kwargs) -> Response:
     :param order_id: 订单ID，来自create_draft
     :return:
     """
-    submit_url = base_url + "/index.php/po/AfterSale/submit"
-    submit_data = {
-        "id": order_id
-    }
-    submit_response = s.post(submit_url, data=submit_data)
-    return submit_response
-
+    return_slow_submit_draft_response = submit_draft(s, base_url, order_id)
+    print(return_slow_submit_draft_response.text)
+    return return_slow_submit_draft_response
 
 # 关闭滞销品退货订单
 # after_sale_list()

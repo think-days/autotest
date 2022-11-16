@@ -8,7 +8,7 @@ import pytest
 from jsonpath import jsonpath
 
 from api.defective_product_return import *
-from api.public_func import get_contact_2_select, cancel_draft, after_sale_list
+from api.public_func import get_contact_2_select, cancel_draft, after_sale_list, inv_location
 from api.return_of_slow_moving_goods import submit_draft
 
 
@@ -70,9 +70,10 @@ class TestDefectiveProductReturn:
         """
         get_return_goods_res = get_return_goods(login_fixture, base_url)
         # 从返回的字典中取出一条入库数量大于锁定数量并且数量最多的物料
+        get_inv_location = jsonpath.jsonpath(inv_location(login_fixture, base_url).json(), '$...locationList[?(@.number=="KZ001")].id')
         get_goods = []
         for i in get_return_goods_res.json()["data"]["rows"]:
-            if i["locationId"] == "638" and i["status"] == "1" and i["inQty"] > i["lockNum"] and i["isGift"] == "否":
+            if i["locationId"] == get_inv_location[0] and i["status"] == "1" and i["inQty"] > i["lockNum"] and i["isGift"] == "否":
                 get_goods.append(i)
         DefectiveGlobalVariable.order_goods_info = heapq.nlargest(1, get_goods, key=lambda s: s["inQty"] - s["lockNum"])
         print(get_return_goods_res.json())
@@ -146,7 +147,7 @@ class TestDefectiveProductReturn:
         :param base_url:
         :return:
         """
-        get_split_order_back_info_res = get_split_order_back_info(login_fixture, base_url, DefectiveGlobalVariable.get_order_id)
+        get_split_order_back_info_res = defective_product_get_split_order_back_info(login_fixture, base_url, DefectiveGlobalVariable.get_order_id)
         print(get_split_order_back_info_res.json())
         assert get_split_order_back_info_res.json()["success"] is True
         assert get_split_order_back_info_res.json()["status"] == "success"
@@ -162,7 +163,7 @@ class TestDefectiveProductReturn:
         :param base_url:
         :return:
         """
-        defective_product_submit_draft_res = submit_draft(login_fixture, base_url, DefectiveGlobalVariable.get_order_id)
+        defective_product_submit_draft_res = defective_product_submit_draft(login_fixture, base_url, DefectiveGlobalVariable.get_order_id)
         print(defective_product_submit_draft_res.json())
         assert defective_product_submit_draft_res.json()["success"] is True
         assert defective_product_submit_draft_res.json()["status"] == "success"

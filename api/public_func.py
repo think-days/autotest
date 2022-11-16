@@ -75,7 +75,7 @@ def close_inv_po(s, base_url, goodslist, token, *args, **kwargs) -> Response:
 
 
 # 退货申请单列表（return_order_list）
-def after_sale_list(s, base_url, key_words=None, bill_status=None, order_type=None, *args, **kwargs) -> Response:
+def after_sale_list(s, base_url, key_words=None, bill_status="", order_type=None, *args, **kwargs) -> Response:
     """
     售后申请单查询
     :param s:
@@ -198,6 +198,42 @@ def create_return_goods_order(s, base_url, create_data) -> Response:
     create_url = base_url + "/index.php/po/AfterSale/create"
     create_response = s.post(create_url, json=create_data)
     return create_response
+
+
+# 查询退货草稿单
+def get_split_order_back_info(s, base_url, defective_order_id, *args, **kwargs) -> Response:
+    """
+    查询草稿单，返回该草稿单明细
+    :param s:
+    :param base_url:
+    :param defective_order_id: 不良品草稿单id:str
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    get_split_order_back_info_url = base_url + "/index.php/scm/invPo/getSplitOrderBackInfo"
+    get_split_order_back_info_data = {
+        "orderId": defective_order_id
+    }
+    get_split_order_back_info_response = s.post(get_split_order_back_info_url, data=get_split_order_back_info_data)
+    return get_split_order_back_info_response
+
+
+# 退货订单提交
+def submit_draft(s, base_url, order_id, *args, **kwargs) -> Response:
+    """
+    退货提交订单
+    :param s:
+    :param base_url:
+    :param order_id: 订单ID，来自create_draft
+    :return:
+    """
+    submit_url = base_url + "/index.php/po/AfterSale/submit"
+    submit_data = {
+        "id": order_id
+    }
+    submit_response = s.post(submit_url, data=submit_data)
+    return submit_response
 
 # if __name__ == '__main__':
 # s = requests.Session()

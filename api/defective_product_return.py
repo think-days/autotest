@@ -3,7 +3,7 @@
 """
 import time
 from requests import Response
-from api.public_func import upload_file_to_oss, create_return_goods_order
+from api.public_func import upload_file_to_oss, create_return_goods_order, get_split_order_back_info, submit_draft
 
 
 def inv_po_return_bad_goods_order(s, base_url, *args, **kwargs) -> Response:
@@ -182,24 +182,35 @@ def after_sale_create(s, base_url, description, so_code_id, src_order_id, contac
     return after_sale_create_response
 
 
-def get_split_order_back_info(s, base_url, defective_order_id, *args, **kwargs) -> Response:
+def defective_product_get_split_order_back_info(s, base_url, draft_id, *args, **kwargs) -> Response:
     """
-    查询草稿单，返回该草稿单明细
+    查询不良品退货草稿单
     :param s:
     :param base_url:
-    :param defective_order_id: 不良品草稿单id:str
+    :param draft_id: 不良品退货草稿单ID
     :param args:
     :param kwargs:
     :return:
     """
-    get_split_order_back_info_url = base_url + "/index.php/scm/invPo/getSplitOrderBackInfo"
-    get_split_order_back_info_data = {
-        "orderId": defective_order_id
-    }
-    get_split_order_back_info_response = s.post(get_split_order_back_info_url, data=get_split_order_back_info_data)
-    return get_split_order_back_info_response
+    defective_product_get_split_order_back_info_response = get_split_order_back_info(s, base_url, draft_id)
+    print(defective_product_get_split_order_back_info_response.text)
+    return defective_product_get_split_order_back_info_response
 
-# submit_draft()
+
+def defective_product_submit_draft(s, base_url, draft_id, *args, **kwargs) -> Response:
+    """
+    不良品退货订单提交
+    :param s:
+    :param base_url:
+    :param draft_id: 不良品退货草稿单ID
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    defective_product_submit_draft_response = submit_draft(s, base_url, draft_id)
+    print(defective_product_submit_draft_response.text)
+    return defective_product_submit_draft_response
+
 # after_sale_list()
 # cancel_draft()
 # after_sale_list()
