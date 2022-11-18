@@ -3,6 +3,7 @@
 """
 import json
 import os
+import time
 
 from filetype import filetype
 from requests import Response
@@ -113,6 +114,46 @@ def cancel_draft(s, base_url, id_s) -> Response:
     }
     cancel_draft_response = s.post(cancel_draft_url, data=cancel_draft_data)
     return cancel_draft_response
+
+
+# 退货申请单商品查询
+def get_return_goods(s, base_url, po_order=None, sku_id=None, product_code=None, product_name=None, *args,
+                     **kwargs) -> Response:
+    """
+    查询退货申请单中中可用数据:不良品退货、少发退货、直采退货
+    :param s:
+    :param base_url:
+    :param base_url:
+    :param po_order:采购订单号,str
+    :param sku_id:物料编码,str
+    :param product_code:产品码,str
+    :param product_name:物料名称,str
+    :param args:
+    :param kwargs:键值对，用于区分退货类型
+    :return:
+    """
+    get_return_goods_type_one_url = base_url + "/index.php/scm/invPo/getReturnGoods"
+    get_return_goods_type_one_param = {
+        "action": "getReturnGoods",
+        **kwargs
+    }
+    get_return_goods_type_one_data = {
+        "_search": "false",
+        "nd": time.time(),
+        "rows": 20,
+        "page": 1,
+        "sidx": "",
+        "sord": "asc",
+        "matchSO": po_order,
+        "skuId": sku_id,
+        "pid": product_code,
+        "pname": product_name,
+        "condition": "skuid"
+    }
+    print("....", get_return_goods_type_one_param)
+    get_return_goods_type_one_response = s.post(get_return_goods_type_one_url, data=get_return_goods_type_one_data,
+                                                params=get_return_goods_type_one_param)
+    return get_return_goods_type_one_response
 
 
 # 退货申请单-获取商品下仓库、货位明细，用于切换仓库

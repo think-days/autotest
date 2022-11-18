@@ -68,7 +68,7 @@ class TestDefectiveProductReturn:
         :param base_url:
         :return:
         """
-        get_return_goods_res = get_return_goods(login_fixture, base_url)
+        get_return_goods_res = defective_product_get_return_goods(login_fixture, base_url)
         # 从返回的字典中取出一条入库数量大于锁定数量并且数量最多的物料
         get_inv_location = jsonpath.jsonpath(inv_location(login_fixture, base_url).json(), '$...locationList[?(@.number=="KZ001")].id')
         get_goods = []
@@ -178,7 +178,7 @@ class TestDefectiveProductReturn:
         :param base_url:
         :return:
         """
-        defective_product_after_sale_list_res = after_sale_list(login_fixture, base_url, bill_status="")
+        defective_product_after_sale_list_res = after_sale_list(login_fixture, base_url)
         print(defective_product_after_sale_list_res.json())
         assert defective_product_after_sale_list_res.json()["success"] is True
         assert defective_product_after_sale_list_res.json()["status"] == "success"

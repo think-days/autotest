@@ -49,7 +49,7 @@ class TestShipLessReturnGoods:
         :param base_url:
         :return:
         """
-        get_return_goods_type_one_res = get_return_goods_type_one(login_fixture, base_url)
+        get_return_goods_type_one_res = ship_less_get_return_goods(login_fixture, base_url, type=1)
         get_inv_location = jsonpath.jsonpath(inv_location(login_fixture, base_url).json(),
                                              '$...locationList[?(@.number=="KZ001")].id')
         get_goods = []

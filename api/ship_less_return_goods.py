@@ -6,7 +6,7 @@ import time
 
 from requests import Response
 
-from api.public_func import create_return_goods_order, get_split_order_back_info, submit_draft
+from api.public_func import create_return_goods_order, get_split_order_back_info, submit_draft, get_return_goods
 
 
 def inv_po_less_return_list(s, base_url, *args, **kwargs) -> Response:
@@ -32,46 +32,20 @@ def inv_po_less_return_list(s, base_url, *args, **kwargs) -> Response:
     }
     inv_po_less_return_list_response = s.post(inv_po_less_return_list_url, data=inv_po_less_return_list_data,
                                               params=inv_po_less_return_list_param)
-    print(inv_po_less_return_list_response.text)
     return inv_po_less_return_list_response
 
 
-def get_return_goods_type_one(s, base_url, po_order=None, sku_id=None, product_code=None, product_name=None, *args,
-                              **kwargs) -> Response:
+def ship_less_get_return_goods(s, base_url, *args, **kwargs) -> Response:
     """
-    查询少发退货中可用数据
+    查询可用的少发退货物料
     :param s:
     :param base_url:
-    :param base_url:
-    :param po_order:采购订单号,str
-    :param sku_id:物料编码,str
-    :param product_code:产品码,str
-    :param product_name:物料名称,str
     :param args:
     :param kwargs:
     :return:
     """
-    get_return_goods_type_one_url = base_url + "/index.php/scm/invPo/getReturnGoods"
-    get_return_goods_type_one_param = {
-        "action": "getReturnGoods",
-        "type": 1
-    }
-    get_return_goods_type_one_data = {
-        "_search": "false",
-        "nd": time.time(),
-        "rows": 20,
-        "page": 1,
-        "sidx": "",
-        "sord": "asc",
-        "matchSO": po_order,
-        "skuId": sku_id,
-        "pid": product_code,
-        "pname": product_name,
-        "condition": "skuid"
-    }
-    get_return_goods_type_one_response = s.post(get_return_goods_type_one_url, data=get_return_goods_type_one_data,
-                                                params=get_return_goods_type_one_param)
-    return get_return_goods_type_one_response
+    ship_less_get_return_goods_res = get_return_goods(s, base_url, *args, **kwargs)
+    return ship_less_get_return_goods_res
 
 
 def ship_less_create(s, base_url, e_dic, *args, **kwargs) -> Response:
@@ -95,7 +69,6 @@ def ship_less_create(s, base_url, e_dic, *args, **kwargs) -> Response:
         "orderType": "30-Cxx-04"
     }
     create_return_goods_order_response = create_return_goods_order(s, base_url, create_return_goods_order_data)
-    print(create_return_goods_order_response.text)
     return create_return_goods_order_response
 
 
@@ -110,7 +83,6 @@ def ship_less_get_split_order_back_info(s, base_url, draft_id, *args, **kwargs) 
     :return:
     """
     ship_less_get_split_order_back_info_response = get_split_order_back_info(s, base_url, draft_id)
-    print(ship_less_get_split_order_back_info_response.text)
     return ship_less_get_split_order_back_info_response
 
 
@@ -125,7 +97,6 @@ def ship_less_submit_draft(s, base_url, draft_id, *args, **kwargs) -> Response:
     :return:
     """
     ship_less_submit_draft_response = submit_draft(s, base_url, draft_id)
-    print(ship_less_submit_draft_response.text)
     return ship_less_submit_draft_response
 
 # after_sale_list()

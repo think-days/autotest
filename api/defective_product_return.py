@@ -3,7 +3,8 @@
 """
 import time
 from requests import Response
-from api.public_func import upload_file_to_oss, create_return_goods_order, get_split_order_back_info, submit_draft
+from api.public_func import upload_file_to_oss, create_return_goods_order, get_split_order_back_info, submit_draft, \
+    get_return_goods
 
 
 def inv_po_return_bad_goods_order(s, base_url, *args, **kwargs) -> Response:
@@ -31,39 +32,17 @@ def inv_po_return_bad_goods_order(s, base_url, *args, **kwargs) -> Response:
     return inv_po_response
 
 
-def get_return_goods(s, base_url, po_order=None, sku_id=None, product_code=None, product_name=None, *args,
-                     **kwargs) -> Response:
+def defective_product_get_return_goods(s, base_url, *args, **kwargs) -> Response:
     """
-    查询可用的不良品退货物料
+    查询可用的不良品物料
     :param s:
     :param base_url:
-    :param po_order:采购订单号,str
-    :param sku_id:物料编码,str
-    :param product_code:产品码,str
-    :param product_name:物料名称,str
     :param args:
     :param kwargs:
     :return:
     """
-    get_return_goods_url = base_url + "/index.php/scm/invPo/getReturnGoods"
-    get_return_goods_params = {
-        "action": "getReturnGoods"
-    }
-    get_return_goods_data = {
-        "_search": "false",
-        "nd": time.time(),
-        "rows": 20,
-        "page": 1,
-        "sidx": "",
-        "sord": "asc",
-        "matchSO": po_order,
-        "skuId": sku_id,
-        "pid": product_code,
-        "pname": product_name,
-        "condition": "skuid"
-    }
-    get_return_goods_response = s.post(get_return_goods_url, data=get_return_goods_data, params=get_return_goods_params)
-    return get_return_goods_response
+    defective_product_get_return_goods_res = get_return_goods(s, base_url, *args, **kwargs)
+    return defective_product_get_return_goods_res
 
 
 def get_return_goods_for_so_code(s, base_url, so_code_id, *args, **kwargs) -> Response:
