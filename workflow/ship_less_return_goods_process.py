@@ -20,6 +20,8 @@ class ShipLessGlobalVariable:
     ship_less_after_order_info = {}
 
 
+@allure.epic("采购模块-退货流程")
+@allure.feature("少发退货流程性用例")
 class TestShipLessReturnGoods:
     """
     少发退货流程性用例
@@ -57,9 +59,7 @@ class TestShipLessReturnGoods:
             if i["status"] == "1" and i["locationId"] == get_inv_location[0] and i["inQty"] > i["lockNum"] and i[
                     "isGift"] == "否":
                 get_goods.append(i)
-        ShipLessGlobalVariable.ship_less_goods_info = heapq.nlargest(2, get_goods,
-                                                                     key=lambda s: s["iid"] == s["iid"] and s["inQty"] -
-                                                                     s["lockNum"])
+        ShipLessGlobalVariable.ship_less_goods_info = heapq.nlargest(1, get_goods, key=lambda s: s["inQty"] - s["lockNum"])
         print(get_return_goods_type_one_res.text)
         print(ShipLessGlobalVariable.ship_less_goods_info)
         assert get_return_goods_type_one_res.json()["data"]["records"] >= "1"
@@ -149,6 +149,8 @@ class TestShipLessReturnGoods:
         assert ship_less_cancel_draft_res.json()["status"] == "success"
         assert ship_less_cancel_draft_res.json()["msg"] == "取消订单成功"
 
+    @allure.title("查询售后申请单列表")
+    @pytest.mark.shiplesslist
     def test_ship_less_after_sale_list_again(self, login_fixture, base_url):
         ship_less_after_sale_list_again_res = after_sale_list(login_fixture, base_url)
         print(ship_less_after_sale_list_again_res.text)

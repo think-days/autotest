@@ -24,8 +24,8 @@ class ReturnGlobalVariable:
     draft_info = {}  # 售后订单详情
 
 
-@allure.epic("采购模块")
-@allure.feature("滞销品退货流程")
+@allure.epic("采购模块-退货流程")
+@allure.feature("滞销品退货流程性用例")
 class TestReturnOfSlowMovingGoods:
     """
     滞销品退货流程性用例

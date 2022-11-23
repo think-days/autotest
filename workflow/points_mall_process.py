@@ -30,7 +30,7 @@ class PointPurchaseGlobalVariable:
     get_inv_po_info_response_info = []  # 未发货退货订单详情
 
 
-@allure.epic("采购模块")
+@allure.epic("采购模块-积分商城")
 @allure.feature("积分商城采购流程")
 class TestPointMall:
     """

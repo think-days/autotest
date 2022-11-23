@@ -26,7 +26,7 @@ class PurchaseGlobalVariable:
     getinvpoinfo_response_info = []  # 未发货退货订单详情
 
 
-@allure.epic("采购模块")
+@allure.epic("采购模块-普通采购")
 @allure.feature("普通采购流程")
 class TestGeneralPurchase:
     """

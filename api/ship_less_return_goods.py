@@ -62,7 +62,6 @@ def ship_less_create(s, base_url, e_dic, *args, **kwargs) -> Response:
     for i in e_dic:
         b = {"srcOrderEntryId": i["id"], "srcOrderId": i["iid"], "rtNum": "1"}
         e.append(b)
-
     create_return_goods_order_data = {
         "entries": e,
         "description": "",

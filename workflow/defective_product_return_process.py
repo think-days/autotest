@@ -20,8 +20,8 @@ class DefectiveGlobalVariable:
     get_order_no = ""
 
 
-@allure.epic("采购模块")
-@allure.title("不良品退货流程")
+@allure.epic("采购模块-退货流程")
+@allure.feature("不良品退货流程")
 class TestDefectiveProductReturn:
     """
     不良品退货流程性用例

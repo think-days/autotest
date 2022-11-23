@@ -6,8 +6,7 @@ import time
 
 from requests import Response
 
-from api.public_func import get_return_goods, create_return_goods_order, get_split_order_back_info, submit_draft, \
-    after_sale_list, cancel_draft
+from api.public_func import *
 
 
 def inv_po_zc_return(s, base_url, *args, **kwargs) -> Response:
@@ -19,7 +18,7 @@ def inv_po_zc_return(s, base_url, *args, **kwargs) -> Response:
     :param kwargs:
     :return:
     """
-    inv_po_zc_return_url = base_url + "invPo"
+    inv_po_zc_return_url = base_url + "/index.php/scm/invPo"
     inv_po_zc_return_params = {
         "action": "ZcReturnList"
     }
@@ -31,9 +30,8 @@ def inv_po_zc_return(s, base_url, *args, **kwargs) -> Response:
         "sidx": "",
         "sord": "asc"
     }
-    inv_po_zc_return_response = s.post(url=inv_po_zc_return_url, params=inv_po_zc_return_params,
-                                       data=inv_po_zc_return_data)
-    print(inv_po_zc_return_response.text)
+    inv_po_zc_return_response = s.post(url=inv_po_zc_return_url, data=inv_po_zc_return_data,
+                                       params=inv_po_zc_return_params)
     return inv_po_zc_return_response
 
 
@@ -46,8 +44,7 @@ def zc_get_return_goods(s, base_url, *args, **kwargs) -> Response:
     :param kwargs: 退货类型
     :return:
     """
-    zc_get_return_goods_response = get_return_goods(s, base_url, *args, **kwargs)
-    print(zc_get_return_goods_response.text)
+    zc_get_return_goods_response = get_return_goods(s, base_url, *args, isZC=1)
     return zc_get_return_goods_response
 
 
@@ -71,7 +68,6 @@ def zc_create_return_goods_order(s, base_url, e_dic, *args, **kwargs) -> Respons
         "orderType": "30-Cxx-16"
     }
     create_return_goods_order_response = create_return_goods_order(s, base_url, zc_create_return_goods_order_data)
-    print(create_return_goods_order_response.text)
     return create_return_goods_order_response
 
 
@@ -86,7 +82,6 @@ def zc_get_split_order_back_info(s, base_url, zc_draft_order_id, *args, **kwargs
     :return:
     """
     zc_get_split_order_back_info_response = get_split_order_back_info(s, base_url, zc_draft_order_id)
-    print(zc_get_split_order_back_info_response.text)
     return zc_get_split_order_back_info_response
 
 
@@ -101,7 +96,6 @@ def zc_submit_draft(s, base_url, zc_draft_order_id, *args, **kwargs) -> Response
     :return:
     """
     zc_submit_draft_response = submit_draft(s, base_url, zc_draft_order_id)
-    print(zc_submit_draft_response.text)
     return zc_submit_draft_response
 
 
@@ -115,7 +109,6 @@ def zc_after_sale_list(s, base_url, *args, **kwargs) -> Response:
     :return:
     """
     zc_after_sale_list_response = after_sale_list(s, base_url)
-    print(zc_after_sale_list_response.text)
     return zc_after_sale_list_response
 
 
@@ -130,7 +123,6 @@ def zc_cancel_draft(s, base_url, zc_draft_order_id, *args, **kwargs) -> Response
     :return:
     """
     zc_cancel_draft_response = cancel_draft(s, base_url, zc_draft_order_id)
-    print(zc_cancel_draft_response.text)
     return zc_cancel_draft_response
 
 
@@ -144,5 +136,4 @@ def zc_after_sale_list_again(s, base_url, *args, **kwargs) -> Response:
     :return:
     """
     zc_after_sale_list_again_response = after_sale_list(s, base_url)
-    print(zc_after_sale_list_again_response.text)
     return zc_after_sale_list_again_response
