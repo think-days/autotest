@@ -3,7 +3,7 @@
 """
 import time
 from requests import Response
-from api.public_func import upload_file_to_oss, create_return_goods_order, get_split_order_back_info, submit_draft, \
+from api.public_func.public_func import upload_file_to_oss, create_return_goods_order, get_split_order_back_info, submit_draft, \
     get_return_goods
 
 

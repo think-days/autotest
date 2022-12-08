@@ -7,10 +7,10 @@ from time import sleep
 import allure
 import pytest
 
-from api.gen_purchase import get_goods_info_by_id
-from api.public_func import *
-from api.points_mall import *
-from api.find_po_order import inv_po
+from api.general_purchase_func.gen_purchase import get_goods_info_by_id
+from api.public_func.public_func import *
+from api.general_purchase_func.points_mall import *
+from api.general_purchase_func.find_po_order import inv_po
 
 
 class PointPurchaseGlobalVariable:

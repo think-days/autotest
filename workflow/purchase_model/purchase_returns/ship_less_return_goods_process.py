@@ -10,8 +10,8 @@ import allure
 import jsonpath
 import pytest
 
-from api.public_func import inv_location, after_sale_list, cancel_draft
-from api.ship_less_return_goods import *
+from api.public_func.public_func import inv_location, after_sale_list, cancel_draft
+from api.purchase_returns_func.ship_less_return_goods import *
 
 
 class ShipLessGlobalVariable:

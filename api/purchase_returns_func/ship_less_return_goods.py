@@ -6,7 +6,7 @@ import time
 
 from requests import Response
 
-from api.public_func import create_return_goods_order, get_split_order_back_info, submit_draft, get_return_goods
+from api.public_func.public_func import create_return_goods_order, get_split_order_back_info, submit_draft, get_return_goods
 
 
 def inv_po_less_return_list(s, base_url, *args, **kwargs) -> Response:

@@ -4,9 +4,9 @@
 import random
 import allure
 import pytest
-from api.gen_purchase import *
-from api.public_func import *
-from api.find_po_order import inv_po
+from api.general_purchase_func.gen_purchase import *
+from api.public_func.public_func import *
+from api.general_purchase_func.find_po_order import inv_po
 
 
 class PurchaseGlobalVariable:

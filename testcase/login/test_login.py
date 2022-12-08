@@ -7,7 +7,7 @@ import pytest
 
 from utils.read_yml import readyml
 from pathlib import Path
-from api.login_funtion import login
+from api.public_func.login_funtion import login
 
 p = Path(__file__)
 yamlPath = p.parent.parent.parent.joinpath("testdata", "login.yml")

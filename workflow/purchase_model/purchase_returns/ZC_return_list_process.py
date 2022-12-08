@@ -9,7 +9,7 @@ import allure
 import jsonpath
 import pytest
 
-from api.ZC_return_list import *
+from api.purchase_returns_func.ZC_return_list import *
 
 
 class CzReturnListGlobalVariable:

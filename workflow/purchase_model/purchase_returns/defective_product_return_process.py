@@ -7,9 +7,8 @@ import allure
 import pytest
 from jsonpath import jsonpath
 
-from api.defective_product_return import *
-from api.public_func import get_contact_2_select, cancel_draft, after_sale_list, inv_location
-from api.return_of_slow_moving_goods import submit_draft
+from api.purchase_returns_func.defective_product_return import *
+from api.public_func.public_func import get_contact_2_select, cancel_draft, after_sale_list, inv_location
 
 
 class DefectiveGlobalVariable:

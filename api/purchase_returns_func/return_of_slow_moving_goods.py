@@ -3,7 +3,7 @@
 """
 from requests import Response
 
-from api.public_func import get_split_order_back_info, submit_draft
+from api.public_func.public_func import get_split_order_back_info, submit_draft
 
 
 def first_return_open(s, base_url, *args, **kwargs) -> Response:

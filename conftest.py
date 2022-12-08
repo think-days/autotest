@@ -2,7 +2,7 @@ import pytest
 import requests
 from requests import Response
 
-from api.login_funtion import login
+from api.public_func.login_funtion import login
 
 
 @pytest.fixture(scope="class")

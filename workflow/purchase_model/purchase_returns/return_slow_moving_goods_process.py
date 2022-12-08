@@ -8,9 +8,9 @@ import allure
 import pytest
 from jsonpath import jsonpath
 
-from api.gen_purchase import inventory
-from api.public_func import *
-from api.return_of_slow_moving_goods import *
+from api.general_purchase_func.gen_purchase import inventory
+from api.public_func.public_func import *
+from api.purchase_returns_func.return_of_slow_moving_goods import *
 
 
 class ReturnGlobalVariable:
